@@ -40,10 +40,10 @@ namespace Rivet {
       // Projections
       const FinalState fs;
       addProjection(fs, "FS");
-      std::vector<std::pair<double, double > > electronEtaRanges;
+      //std::vector<std::pair<double, double > > electronEtaRanges;
       std::vector<std::pair<double, double > > muonEtaRanges;
-      electronEtaRanges.push_back(make_pair(-2.47,-1.37));
-      electronEtaRanges.push_back(make_pair(1.52,2.47));
+      //electronEtaRanges.push_back(make_pair(-2.47,-1.37));
+      //electronEtaRanges.push_back(make_pair(1.52,2.47));
       muonEtaRanges.push_back(make_pair(-2.4,2.4));
 
       WFinder muWFinder(fs, muonEtaRanges, 20*GeV, MUON, 40*GeV,1000*GeV,25*GeV,0.4,true,false,80.4,true);
@@ -51,7 +51,7 @@ namespace Rivet {
 
       addProjection(muWFinder,"muWFinder");
 
-      FastJets JetProjection(muWFinder.remainingFinalState(),FastJets::KT,0.7);
+      FastJets JetProjection(fs,FastJets::KT,0.7); //muWFinder.remainingFinalState()
       addProjection(JetProjection,"Jets");
 
       // @todo Implement the following histos properly
@@ -65,46 +65,70 @@ namespace Rivet {
 
       // Histograms
 
-      // Jet Kinematics
-      Histograms["JetPt"]	= bookHistogram1D("JetPt"	, 300, 0, 30);
-      Histograms["JetE"]	= bookHistogram1D("JetE"	, 100, 0, 200);
-      Histograms["JetEta"]	= bookHistogram1D("JetEta"	, 50, -5, 5);
-      Histograms["JetRapidity"] = bookHistogram1D("JetRapidity"	, 50, -5, 5);
-      Histograms["JetPhi"]	= bookHistogram1D("JetPhi"	, 50, 0, TWOPI);
-      // Jet Theoreticals 
-      Histograms["Jet2Mass"]     = bookHistogram1D("Jet2Mass"	, 200, 0, 100);
-      Histograms["Jet3Mass"]     = bookHistogram1D("Jet3Mass"	, 200, 0, 100);
-      Histograms["SubJetDeltaR"] = bookHistogram1D("Jet3Mass"	, 200, 0, 3.0);
-      Histograms["SubJetMass"]   = bookHistogram1D("SubJetMass"	, 200, 0, 100);
-      Histograms["SubJetSumEt"]	 = bookHistogram1D("SubJetSumEt", 200, 0, 100);
-
+      _histJetMult	= bookHistogram1D("Mult", 100, -0.5, 199.5);
+      //Jet Kinematics
+      _histJetPt	= bookHistogram1D("JetPt"	, 300, 0, 30);
+      _histJetE		= bookHistogram1D("JetE"	, 100, 0, 200);
+      _histJetEta	= bookHistogram1D("JetEta"	, 50, -5, 5);
+      _histJetRapidity	= bookHistogram1D("JetRapidity"	, 50, -5, 5);
+      _histJetPhi	= bookHistogram1D("JetPhi"	, 50, 0, TWOPI);
+      // Jet theoreticals
+      /*
+      _histJet2Mass	= bookHistogram1D("Jet2Mass"	, 200, 0, 100);
+      _histJet3Mass	= bookHistogram1D("Jet3Mass"	, 200, 0, 100);
+      _histSubJetDeltaR	= bookHistogram1D("Jet3Mass"	, 200, 0, 3.0);
+      _histSubJetMass	= bookHistogram1D("SubJetMass"	, 200, 0, 100);
+      _histSubJetSumEt	= bookHistogram1D("SubJetSumEt", 200, 0, 100);
+      */
     }
     /// Perform the per-event analysis
     void analyze(const Event& event) 
     {
-
+      /*
       const WFinder& muWFinder = applyProjection<WFinder>(event,"muWFinder");
       if (muWFinder.bosons().size() != 1)
 	vetoEvent;
-
+      */
       const double weight = event.weight();
       const FastJets& JetProjection = applyProjection<FastJets>(event, "Jets");
       const Jets& jets = JetProjection.jetsByPt(20.0*GeV);
 
+      //const FinalState& fs = applyProjection<FinalState>(event, "FS");      
+      /*
+      _histMult->fill(fs.size(),weight);
+      foreach(const Particle& p, fs.particles())
+	{
+	  _histEta->fill(p.momentum().eta(),weight);
+	  _histPt->fill(p.momentum().pT(),weight);
+	}
+      */
       if (jets.size() > 0) 
 	{
+	  
 	  //foreach(Jets::const_iterator jet,jets)
 	  unsigned int jetMult=jets.size();
-	  std::cout<<"Jet Mult: "<<jetMult<<endl;
-	  
+	  //std::cout<<"Jet Mult: "<<jetMult<<endl;
+	  _histJetMult->fill(jetMult);
+	  foreach(const Jet& jet, jets)
+	    {
+	      const FourMomentum& jetP=jet.momentum();
+	      /*
+	      printf("pT: %'.3f eta: %'.3f rapidity: %'.3f phi: %'.3f \n",
+		     jetP.pT(),jetP.eta(),jetP.rapidity(), jetP.phi());
+	      */
+
+	      _histJetPt->fill(jetP.pT(),weight);	
+	      _histJetE->fill(jetP.E(),weight);
+	      _histJetEta->fill(jetP.eta(),weight);	
+	      _histJetRapidity->fill(jetP.rapidity(),weight); 
+	      _histJetPhi->fill(jetP.phi(),weight);	
+
+	    }
+	  /*
 	  for(unsigned int i=0; i < jetMult; ++i)//figure out the foreach macro for jets
 	    {
-	      Histograms["JetPt"]->fill(jets[i].momentum().pT(),weight);	
-	      Histograms["JetE"]->fill(jets[i].momentum().E(),weight);
-	      Histograms["JetEta"]->fill(jets[i].eta(),weight);	
-	      //Histograms["JetRapidity"]->fill(jet.y(),weight); 
-	      Histograms["JetPhi"]->fill(jets[i].phi(),weight);	
 	    }
+	  */
 	}
       else
 	vetoEvent;
@@ -118,31 +142,53 @@ namespace Rivet {
       foreach(BookedHistos::value_type H,Histograms)
 	scale(H.second,1/sumOfWeights());
       */
-      // for some reason looping is broken, scale histograms manually =/
-      // Jet Kinematics
 
-      scale( Histograms["JetPt"] ,1/sumOfWeights());
-      scale( Histograms["JetE"] ,1/sumOfWeights());
-      scale( Histograms["JetEta"] ,1/sumOfWeights());
-      //scale( Histograms["JetRapidity"] ,1/sumOfWeights());
-      scale( Histograms["JetPhi"] ,1/sumOfWeights());
+      // Jet Kinematics
+      /*
+      scale( _histMult ,1/sumOfWeights());
+      scale( _histPt ,1/sumOfWeights());
+      scale( _histEta ,1/sumOfWeights());
+      */
+
+      scale( _histJetMult ,1/sumOfWeights());
+      scale( _histJetPt ,1/sumOfWeights());
+      scale( _histJetE ,1/sumOfWeights());
+      scale( _histJetEta ,1/sumOfWeights());
+      scale( _histJetRapidity ,1/sumOfWeights());
+      scale( _histJetPhi ,1/sumOfWeights());
+
       // Jet Theoreticals 	
       /*
-      scale( Histograms["Jet2Mass"] ,1/sumOfWeights());
-      scale( Histograms["Jet3Mass"] ,1/sumOfWeights());
-      scale( Histograms["SubJetDeltaR"] ,1/sumOfWeights());
-      scale( Histograms["SubJetMass"] ,1/sumOfWeights());
-      scale( Histograms["SubJetSumEt"] ,1/sumOfWeights());
+      scale( _histJet2Mass ,1/sumOfWeights());
+      scale( _histJet3Mass ,1/sumOfWeights());
+      scale( _histSubJetDeltaR ,1/sumOfWeights());
+      scale( _histSubJetMass ,1/sumOfWeights());
+      scale( _histSubJetSumEt ,1/sumOfWeights());
       */
     }
     //@}
-private:
+  private:
 
     ///@param Histograms Indexed by histogram name for easy management
     ///until Rivet Autobooking takes over, allows any number of
     ///histograms to be added "on the fly" in the init() method.
     //@{
-    BookedHistos Histograms;
+    AIDA::IHistogram1D *_histJetMult;
+
+    //Jet Kinematics	
+    AIDA::IHistogram1D *_histJetPt;
+    AIDA::IHistogram1D *_histJetE;
+    AIDA::IHistogram1D *_histJetEta;
+    AIDA::IHistogram1D *_histJetRapidity;
+    AIDA::IHistogram1D *_histJetPhi;
+    // Jet theoretical
+    /*
+    AIDA::IHistogram1D *_histJet2Mass;
+    AIDA::IHistogram1D *_histJet3Mass;
+    AIDA::IHistogram1D *_histSubJetDeltaR;
+    AIDA::IHistogram1D *_histSubJetMass;
+    AIDA::IHistogram1D *_histSubJetSumEt;
+    */
     //@}
 
   };
