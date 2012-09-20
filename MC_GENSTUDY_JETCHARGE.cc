@@ -51,7 +51,7 @@ namespace Rivet {
 
       addProjection(muWFinder,"muWFinder");
 
-      FastJets JetProjection(fs,FastJets::KT,0.7); //muWFinder.remainingFinalState()
+      FastJets JetProjection(muWFinder.remainingFinalState(),FastJets::KT,0.7); //
       addProjection(JetProjection,"Jets");
 
       // @todo Implement the following histos properly
@@ -65,9 +65,9 @@ namespace Rivet {
 
       // Histograms
 
-      _histJetMult	= bookHistogram1D("Mult", 100, -0.5, 199.5);
+      _histJetMult	= bookHistogram1D("Mult", 11, -0.5, 10.5);
       //Jet Kinematics
-      _histJetPt	= bookHistogram1D("JetPt"	, 300, 0, 30);
+      _histJetPt	= bookHistogram1D("JetPt"	, 100, 20, 50);
       _histJetE		= bookHistogram1D("JetE"	, 100, 0, 200);
       _histJetEta	= bookHistogram1D("JetEta"	, 50, -5, 5);
       _histJetRapidity	= bookHistogram1D("JetRapidity"	, 50, -5, 5);
@@ -84,11 +84,13 @@ namespace Rivet {
     /// Perform the per-event analysis
     void analyze(const Event& event) 
     {
-      /*
+
       const WFinder& muWFinder = applyProjection<WFinder>(event,"muWFinder");
       if (muWFinder.bosons().size() != 1)
+      {
 	vetoEvent;
-      */
+      }
+
       const double weight = event.weight();
       const FastJets& JetProjection = applyProjection<FastJets>(event, "Jets");
       const Jets& jets = JetProjection.jetsByPt(20.0*GeV);
@@ -116,13 +118,11 @@ namespace Rivet {
 	      printf("pT: %'.3f eta: %'.3f rapidity: %'.3f phi: %'.3f \n",
 		     jetP.pT(),jetP.eta(),jetP.rapidity(), jetP.phi());
 	      */
-
 	      _histJetPt->fill(jetP.pT(),weight);	
 	      _histJetE->fill(jetP.E(),weight);
 	      _histJetEta->fill(jetP.eta(),weight);	
 	      _histJetRapidity->fill(jetP.rapidity(),weight); 
 	      _histJetPhi->fill(jetP.phi(),weight);	
-
 	    }
 	  /*
 	  for(unsigned int i=0; i < jetMult; ++i)//figure out the foreach macro for jets
