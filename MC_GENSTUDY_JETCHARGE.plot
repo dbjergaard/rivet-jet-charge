@@ -37,10 +37,90 @@ LogY=0
 LegendYPos=0.75
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/Mult$
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetMult$
 Title=Jet Multiplicity
 XLabel=$n$
 YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
 LogY=0
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJet2Mass$
+Title=Invariant Mass distribution of 2 sub-jet pairs
+XLabel=$GeV/c^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJet3Mass$
+Title=Invariant Mass distribution of 3 sub-jet tuples
+XLabel=$GeV/c^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/Jet2Mass$
+Title=Invariant Mass distribution of 2 jet pairs
+XLabel=$GeV/c^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/Jet3Mass$
+Title=Invariant Mass distribution of 3 jet tuples
+XLabel=$GeV/c^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJetDeltaR$
+Title=$\Delta R$ of subjets
+XLabel=sterad
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJetMass$
+Title=Invariant Mass distribution of sub-jets
+XLabel=$GeV/c^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetMass$
+Title=Invariant Mass distribution of jets
+XLabel=$GeV/c^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJetSumEt$
+Title= Summed $E_T$ of the sub-jets
+XLabel=$GeV$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetDipolarity$
+Title= Dipolarity of jet
+XLabel=$ed$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetCharge$
+Title= Charge of Jet
+XLabel=e
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
 # END PLOT
 
