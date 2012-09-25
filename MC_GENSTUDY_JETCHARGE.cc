@@ -72,14 +72,15 @@ namespace Rivet {
       _histJetEta	= bookHistogram1D("JetEta"	, 50, -5, 5);
       _histJetRapidity	= bookHistogram1D("JetRapidity"	, 50, -5, 5);
       _histJetPhi	= bookHistogram1D("JetPhi"	, 50, 0, TWOPI);
+      //_histJetMass      = bookHistogram1D("JetMass"	, 200, 0, 100);
       // Jet theoreticals
-      /*
+			
       _histJet2Mass	= bookHistogram1D("Jet2Mass"	, 200, 0, 100);
       _histJet3Mass	= bookHistogram1D("Jet3Mass"	, 200, 0, 100);
-      _histSubJetDeltaR	= bookHistogram1D("Jet3Mass"	, 200, 0, 3.0);
+      _histSubJetDeltaR	= bookHistogram1D("SubJetDeltaR", 200, 0, 3.0);
       _histSubJetMass	= bookHistogram1D("SubJetMass"	, 200, 0, 100);
       _histSubJetSumEt	= bookHistogram1D("SubJetSumEt", 200, 0, 100);
-      */
+
     }
     /// Perform the per-event analysis
     void analyze(const Event& event) 
@@ -93,42 +94,54 @@ namespace Rivet {
 
       const double weight = event.weight();
       const FastJets& JetProjection = applyProjection<FastJets>(event, "Jets");
-      const Jets& jets = JetProjection.jetsByPt(20.0*GeV);
+      const PseudoJets& jets = JetProjection.pseudoJetsByPt(20.0*GeV);
 
-      //const FinalState& fs = applyProjection<FinalState>(event, "FS");      
-      /*
-      _histMult->fill(fs.size(),weight);
-      foreach(const Particle& p, fs.particles())
-	{
-	  _histEta->fill(p.momentum().eta(),weight);
-	  _histPt->fill(p.momentum().pT(),weight);
-	}
-      */
       if (jets.size() > 0) 
 	{
-	  
-	  //foreach(Jets::const_iterator jet,jets)
 	  unsigned int jetMult=jets.size();
-	  //std::cout<<"Jet Mult: "<<jetMult<<endl;
 	  _histJetMult->fill(jetMult);
-	  foreach(const Jet& jet, jets)
+	  foreach(const fastjet::PseudoJet& jet, jets)
 	    {
-	      const FourMomentum& jetP=jet.momentum();
-	      /*
-	      printf("pT: %'.3f eta: %'.3f rapidity: %'.3f phi: %'.3f \n",
-		     jetP.pT(),jetP.eta(),jetP.rapidity(), jetP.phi());
-	      */
+	      const FourMomentum& jetP=Rivet::momentum(jet);
+	      if(jet.has_valid_cs())
+		{
+		  //check dcut==0.4 is appropriate
+		  double dcut=0.4;
+		  double sumEt=0.0;
+		  
+		  PseudoJets subJets=jet.validated_cs()->exclusive_subjets(jet,dcut);
+		  unsigned int nSubJets=jet.validated_cs()->n_exclusive_subjets(jet,dcut);
+		  fastjet::PseudoJet subJetMom;
+		  for(unsigned int j=0;j!=nSubJets;++j)
+		    {
+		      sumEt+=subJets.at(j).Et();
+
+		      subJetMom=subJets.at(j);
+		      _histSubJetMass->fill(subJetMom.m());
+		      
+		      if(j+1<nSubJets)
+			{
+			  subJetMom+=subJets.at(j+1);
+			  _histJet2Mass->fill(subJetMom.m(),weight);
+			}
+		      else if(j+2<nSubJets)
+			{
+			  subJetMom+=subJets.at(j+2);
+			  _histJet3Mass->fill(subJetMom.m(),weight);
+			}
+
+		      for(unsigned int k=j; k!=nSubJets;++k)
+			_histSubJetDeltaR->fill(subJets.at(j).delta_R(subJets.at(k)),weight);
+		    }
+		  _histSubJetSumEt->fill(sumEt,weight);
+		}
+	      //_histJetMass->fill(jetP.mass(),weight);
 	      _histJetPt->fill(jetP.pT(),weight);	
 	      _histJetE->fill(jetP.E(),weight);
 	      _histJetEta->fill(jetP.eta(),weight);	
 	      _histJetRapidity->fill(jetP.rapidity(),weight); 
 	      _histJetPhi->fill(jetP.phi(),weight);	
 	    }
-	  /*
-	  for(unsigned int i=0; i < jetMult; ++i)//figure out the foreach macro for jets
-	    {
-	    }
-	  */
 	}
       else
 	vetoEvent;
@@ -144,27 +157,21 @@ namespace Rivet {
       */
 
       // Jet Kinematics
-      /*
-      scale( _histMult ,1/sumOfWeights());
-      scale( _histPt ,1/sumOfWeights());
-      scale( _histEta ,1/sumOfWeights());
-      */
-
       scale( _histJetMult ,1/sumOfWeights());
       scale( _histJetPt ,1/sumOfWeights());
       scale( _histJetE ,1/sumOfWeights());
       scale( _histJetEta ,1/sumOfWeights());
       scale( _histJetRapidity ,1/sumOfWeights());
       scale( _histJetPhi ,1/sumOfWeights());
+      //scale( _histJetMass ,1/sumOfWeights());
 
       // Jet Theoreticals 	
-      /*
       scale( _histJet2Mass ,1/sumOfWeights());
       scale( _histJet3Mass ,1/sumOfWeights());
       scale( _histSubJetDeltaR ,1/sumOfWeights());
       scale( _histSubJetMass ,1/sumOfWeights());
       scale( _histSubJetSumEt ,1/sumOfWeights());
-      */
+
     }
     //@}
   private:
@@ -181,15 +188,19 @@ namespace Rivet {
     AIDA::IHistogram1D *_histJetEta;
     AIDA::IHistogram1D *_histJetRapidity;
     AIDA::IHistogram1D *_histJetPhi;
+    //AIDA::IHistogram1D *_histJetMass;
+
     // Jet theoretical
-    /*
+
     AIDA::IHistogram1D *_histJet2Mass;
     AIDA::IHistogram1D *_histJet3Mass;
     AIDA::IHistogram1D *_histSubJetDeltaR;
     AIDA::IHistogram1D *_histSubJetMass;
     AIDA::IHistogram1D *_histSubJetSumEt;
-    */
+
     //@}
+			
+
 
   };
 
