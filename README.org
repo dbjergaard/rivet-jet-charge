@@ -10,9 +10,9 @@ information as possible from the jets.
 
 ** Jet Charge
 Jet Charge is defined as
-$$
+\begin{equation}
 Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
-$$
+\end{equation}
 
 ** Jet Dipolarity
    
