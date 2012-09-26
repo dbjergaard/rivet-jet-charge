@@ -27,13 +27,13 @@ typically only defined for jets with two subjets.
       WFinder muWFinder(fs, muonEtaRanges, 20*GeV, MUON, 
 			40*GeV,1000*GeV,25*GeV,0.4,true,false,80.4,true);
 #+end_src
-    - In engish:
+    - In english:
       - Selections on the Muon:
 	- $|\eta|<2.4$
 	- $p_T > 20 GeV/c$
 	- $ \Delta R >0.4 $ (Maximum delta R between muon and a jet)
       - Selections on the W
-	- $ 40 GeV/c^2 < m_T < 1000 GeV/c^2
+	- $ 40 GeV/c^2 < m_T < 1000 GeV/c^2 $
 clusterPhotons is true, trackPhotons is false
 ** Histograms
    - Jet Multiplicity 
