@@ -1,4 +1,1 @@
-rivet-jet-charge
-================
-
-Rivet Jet Charge Analysis
+# Rivet Jet Charge Analysis
