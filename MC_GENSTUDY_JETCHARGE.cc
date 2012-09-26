@@ -38,12 +38,8 @@ namespace Rivet {
       // Projections
       const FinalState fs;
       addProjection(fs, "FS");
-      //std::vector<std::pair<double, double > > electronEtaRanges;
       std::vector<std::pair<double, double > > muonEtaRanges;
-      //electronEtaRanges.push_back(make_pair(-2.47,-1.37));
-      //electronEtaRanges.push_back(make_pair(1.52,2.47));
       muonEtaRanges.push_back(make_pair(-2.4,2.4));
-
       WFinder muWFinder(fs, muonEtaRanges, 20*GeV, MUON, 
 			40*GeV,1000*GeV,25*GeV,0.4,true,false,80.4,true);
 
@@ -66,7 +62,7 @@ namespace Rivet {
       _histJetE		= bookHistogram1D("JetE"	, 100, 0, 200);
       _histJetEta	= bookHistogram1D("JetEta"	, 50, -5, 5);
       _histJetRapidity	= bookHistogram1D("JetRapidity"	, 50, -5, 5);
-      _histJetPhi	= bookHistogram1D("JetPhi"	, 50, 0, TWOPI);
+      //_histJetPhi	= bookHistogram1D("JetPhi"	, 50, 0, TWOPI);
       _histJetMass      = bookHistogram1D("JetMass"	, 200, 0, 40);
       // Jet theoreticals
       _histJet2Mass	= bookHistogram1D("Jet2Mass"	, 200, 0, 100);
@@ -139,7 +135,7 @@ namespace Rivet {
 	      _histJetE->fill(jet->E(),weight);
 	      _histJetEta->fill(jet->eta(),weight);	
 	      _histJetRapidity->fill(jet->rapidity(),weight); 
-	      _histJetPhi->fill(jet->phi(),weight);	
+	      //_histJetPhi->fill(jet->phi(),weight);	
 	      _histJetCharge->fill(JetProjection.JetCharge(*jet,0.5),weight);
 	      _histJetDipolarity->fill(JetProjection.Dipolarity(*jet),weight);
 	      
@@ -170,7 +166,7 @@ namespace Rivet {
       scale( _histJetE ,1/sumOfWeights());
       scale( _histJetEta ,1/sumOfWeights());
       scale( _histJetRapidity ,1/sumOfWeights());
-      scale( _histJetPhi ,1/sumOfWeights());
+      //scale( _histJetPhi ,1/sumOfWeights());
       scale( _histJetMass ,1/sumOfWeights());
 
 
@@ -200,7 +196,7 @@ namespace Rivet {
     AIDA::IHistogram1D *_histJetE;
     AIDA::IHistogram1D *_histJetEta;
     AIDA::IHistogram1D *_histJetRapidity;
-    AIDA::IHistogram1D *_histJetPhi;
+    //AIDA::IHistogram1D *_histJetPhi;
     AIDA::IHistogram1D *_histJetMass;
 
     // Jet theoreticals

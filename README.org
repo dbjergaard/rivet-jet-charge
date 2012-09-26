@@ -5,19 +5,59 @@ The big picture aim of this study is to provide an accurate picture of
 how different Monte Carlo generators handle creation of jets.  In
 order to fully assess different generators, we must extract as much
 information as possible from the jets.
-
-
-
-** Jet Charge
+** Implemented theoreticals
+*** Jet Charge
 Jet Charge is defined as
 #+begin_src latex
 Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
 #+end_src
 Put in words, its the sum of the charge of the constituent particles
 weighted by the particle's transverse momentum. 
-** Jet Dipolarity
+*** Jet Dipolarity
 Jet dipolarity is a p_T weighted sum over the radii of sub-jets. It is
 typically only defined for jets with two subjets. 
+
+
+** Analysis Cuts
+*** W boson selection
+    - The W finder projection is configured as 
+#+begin_src c++
+      std::vector<std::pair<double, double > > muonEtaRanges;
+      muonEtaRanges.push_back(make_pair(-2.4,2.4));
+      WFinder muWFinder(fs, muonEtaRanges, 20*GeV, MUON, 
+			40*GeV,1000*GeV,25*GeV,0.4,true,false,80.4,true);
+#+end_src
+    - In engish:
+      - Selections on the Muon:
+	- $|\eta|<2.4$
+	- $p_T > 20 GeV/c$
+	- $ \Delta R >0.4 $ (Maximum delta R between muon and a jet)
+      - Selections on the W
+	- $ 40 GeV/c^2 < m_T < 1000 GeV/c^2
+clusterPhotons is true, trackPhotons is false
+** Histograms
+   - Jet Multiplicity 
+     - Histogram of number of Jets in events over all events
+   - Inclusive p_T
+   - Inclusive E
+   - Inclusive Mass
+   - Invariant mass of jet pairs
+   - Invariant mass of jet triples
+   - Invariant mass of sub-jet pairs
+   - Invariant mass of sub-jet triples
+   - DeltaR of sub-jets
+   - Invariant mass of all subjets
+   - Dipolarity of jet with two subjets
+   - Charge of jet
+|--------------------------+-------------+--------+------------|
+| Subprocess               | # of points |        | Sigma (mb) |
+|--------------------------+-------------+--------+------------|
+|                          |   Generated |  Tried |            |
+|--------------------------+-------------+--------+------------|
+| 0 Inclusive              |       50000 | 593829 |   1.475e-4 |
+| 16 f + fbar' -> g + W\pm |       29847 | 408870 |   8.814e-5 |
+| 31 f + g -> f' +  W\pm   |       20153 | 184959 |   5.937e-5 |
+|--------------------------+-------------+--------+------------|
 
 * Working notes (dirty and unorganized)
  - Do this analysis for low p_T W's 
