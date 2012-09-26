@@ -1,1 +1,63 @@
 * Rivet Jet Substructure Study
+
+** Physics Motivation
+The big picture aim of this study is to provide an accurate picture of
+how different Monte Carlo generators handle creation of jets.  In
+order to fully assess different generators, we must extract as much
+information as possible from the jets.
+
+
+
+** Jet Charge
+Jet Charge is defined as
+$$
+Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
+$$
+
+** Jet Dipolarity
+   
+
+* Working notes (dirty and unorganized)
+ - Do this analysis for low p_T W's 
+ - Get rid of Phi distribution, come back if crazy things start happening
+
+ - Put Current of FastJet in Github repo and push there
+
+Take the hardest jet to cut against gluons from QCD. 
+
+ - Pythia -> cross sections at the end of the run, this will give
+   W+quark or W+gluon, 
+
+   - if W+gluon then the charge is zero
+   - if W+quark, then the charge is interesting
+     Make table (conserving weak isospin) predicting what kind of
+     quark will come with which W (charge) 
+     
+     Going to get more positive W's (or negative quarks)
+     - Product charge W with quark charge to increase statistical
+       power (histogram jet charge*W charge)
+
+       - Histogram the W charge 
+
+     Draw Feynman diagrams for this!
+
+** Cuts
+  Get Jets ordered by P_t
+
+  use the first one as the recoiling jet
+
+** Histograms
+  - W charge
+  - W*jet charge
+    Make same distributions for the hard p_T 
+
+Any subjet calculation should be calculated in FasJet calculation class
+ - Move 
+
+** Things for future
+ - In the future look at Inv Mass dist of Jets as a function of W p_T
+   cut
+
+** Presentation next week
+  Feynman diagrams for all related processes
+  
