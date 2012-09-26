@@ -10,12 +10,14 @@ information as possible from the jets.
 
 ** Jet Charge
 Jet Charge is defined as
-\[
+#+begin_src latex
 Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
-\]
-
+#+end_src
+Put in words, its the sum of the charge of the constituent particles
+weighted by the particle's transverse momentum. 
 ** Jet Dipolarity
-   
+Jet dipolarity is a p_T weighted sum over the radii of sub-jets. It is
+typically only defined for jets with two subjets. 
 
 * Working notes (dirty and unorganized)
  - Do this analysis for low p_T W's 
