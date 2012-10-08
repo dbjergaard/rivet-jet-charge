@@ -8,9 +8,9 @@ information as possible from the jets.
 ** Implemented theoreticals
 *** Jet Charge
 Jet Charge is defined as
-#+begin_src latex
+$$
 Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
-#+end_src
+$$
 Put in words, its the sum of the charge of the constituent particles
 weighted by the particle's transverse momentum. 
 *** Jet Dipolarity
@@ -31,9 +31,9 @@ typically only defined for jets with two subjets.
       - Selections on the Muon:
 	- $|\eta|<2.4$
 	- $p_T > 20 GeV/c$
-	- $ \Delta R >0.4 $ (Maximum delta R between muon and a jet)
+	- $\Delta R >0.4$ (Maximum delta R between muon and a jet)
       - Selections on the W
-	- $ 40 GeV/c^2 < m_T < 1000 GeV/c^2 $
+	- $40 GeV/c^2 < m_T < 1000 GeV/c^2$
 clusterPhotons is true, trackPhotons is false
 ** Histograms
    - Jet Multiplicity 
@@ -80,8 +80,6 @@ Take the hardest jet to cut against gluons from QCD.
        power (histogram jet charge*W charge)
 
        - Histogram the W charge 
-
-     Draw Feynman diagrams for this!
 
 ** Cuts
   Get Jets ordered by P_t

@@ -44,6 +44,13 @@ YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
 LogY=0
 # END PLOT
 
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJetMult$
+Title=Sub-jet Multiplicity
+XLabel=$n$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+# END PLOT
+
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJet2Mass$
 Title=Invariant Mass distribution of 2 sub-jet pairs
 XLabel=$GeV/c^2$
@@ -116,8 +123,16 @@ LogY=0
 LegendYPos=0.75
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetCharge$
-Title= Charge of Jet
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/WJetCharge$
+Title= Jet charge multiplied by W charge  ($Q_j Q_W$)
+XLabel=$e^2$
+YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
+LogY=0
+LegendYPos=0.75
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/WCharge$
+Title= Charge of tagged W
 XLabel=e
 YLabel=$1/\sigma \; \mathrm{d}\sigma/\mathrm{d}\phi$
 LogY=0

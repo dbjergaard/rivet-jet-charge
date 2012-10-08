@@ -158,35 +158,34 @@ namespace Rivet {
   }
 
   /// D===1/R_{12} \Sum_{i\in J} p_{Ti}/p_{TJ} R_i
-  double FastJets::Dipolarity(const fastjet::PseudoJet &j) const
+  double FastJets::Dipolarity(const fastjet::PseudoJet &j, const double dcut=0.5) const
   {
     assert(clusterSeq());
-    const PseudoJets parts = clusterSeq()->constituents(j);
     double D(0);
-    if(parts.size()==2)
-      {
-	double eta1=Rivet::momentum(parts.at(0)).eta(),phi1=Rivet::momentum(parts.at(0)).phi();
-	double eta2=Rivet::momentum(parts.at(1)).eta(),phi2=Rivet::momentum(parts.at(1)).phi();
-	foreach (const fastjet::PseudoJet& p, parts) {
-	  double eta=Rivet::momentum(p).eta(),phi=Rivet::momentum(p).phi();
-	  D += p.perp()*(eta*eta+phi*phi);
-	}
-	return D/(j.perp()*((eta1-eta2)*(eta1-eta2)+(phi1-phi2)*(phi1-phi2)));
-      }
+    PseudoJets subJets=j.validated_cs()->exclusive_subjets(j,dcut);
+    unsigned int nSubJets=j.validated_cs()->n_exclusive_subjets(j,dcut);
+    double denom=j.pt()*pow(subJets.at(0).delta_R(subJets.at(1)),2);
+    if(nSubJets>2)  {
+      //for now take the first two 
+      D+=subJets.at(0).pt()*(pow(subJets.at(0).eta(),2) + pow(subJets.at(0).phi(),2));
+      D+=subJets.at(1).pt()*(pow(subJets.at(1).eta(),2) + pow(subJets.at(1).phi(),2));
+      return D/denom;
+    }
     return D;
   }
 
   ///Q===\Sum_{i\in J} q_i*p_{Ti}^k/p_{TJ} 
-  double FastJets::JetCharge(const fastjet::PseudoJet &j, const double k=0.5) const {
+  double FastJets::JetCharge(const fastjet::PseudoJet &j, const double k=0.5, const double ptmin=-1*GeV) const {
     assert(clusterSeq());
     const PseudoJets parts = clusterSeq()->constituents(j);
     double q(0);
     foreach (const fastjet::PseudoJet& p, parts) {
       map<int, Particle>::const_iterator found = _particles.find(p.user_index());
       assert(found != _particles.end());
-      q += PID::charge(found->second) * pow(p.perp(),k);       
+      if(p.pt() > ptmin) //pt always > 0, if the user hasn't defined a cut, this will always pass
+	q += PID::charge(found->second) * pow(p.pt(),k);       
     }
-    return q/j.perp();
+    return q/j.pt();
   }
 
   // Jets FastJets::jetsByPt(double ptmin) const {

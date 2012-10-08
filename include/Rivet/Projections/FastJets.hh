@@ -126,10 +126,9 @@ namespace Rivet {
     }
 
     /// Calculate Dipolarity of Jet
-    double Dipolarity(const fastjet::PseudoJet &j) const;
+    double Dipolarity(const fastjet::PseudoJet &j, const double dcut) const;
     /// Calculate JetCharge
-    double JetCharge(const fastjet::PseudoJet &j, const double k) const;
-
+    double JetCharge(const fastjet::PseudoJet &j, const double k, const double ptmin) const;
 
     /// Get the jets (unordered).
     Jets _jets(double ptmin = 0.0) const;
