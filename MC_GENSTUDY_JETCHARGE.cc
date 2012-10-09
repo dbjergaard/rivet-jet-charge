@@ -49,7 +49,7 @@ namespace Rivet {
       // Tag a W in the event, focus on jets that don't come from the W decay.
       addProjection(muWFinder,"muWFinder");
 
-      FastJets JetProjection(muWFinder.remainingFinalState(),FastJets::KT,0.7); //
+      FastJets JetProjection(muWFinder.remainingFinalState(),FastJets::ANTIKT, 0.6); //FastJets::KT,0.7
       addProjection(JetProjection,"Jets");
 
       // @todo Implement the following histos properly
@@ -70,7 +70,7 @@ namespace Rivet {
       //_histJet2Mass	= bookHistogram1D("Jet2Mass"	, 200, 0, 100);
       //_histJet3Mass	= bookHistogram1D("Jet3Mass"	, 200, 0, 100);
 			
-      _histSubJetMult	= bookHistogram1D("SubJetMult", 7, -0.5, 6.5);
+      _histSubJetMult	= bookHistogram1D("SubJetMult", 15, -0.5, 14.5);
       _histSubJet2Mass	= bookHistogram1D("SubJet2Mass"	, 200, 0, 25);
       _histSubJet3Mass	= bookHistogram1D("SubJet3Mass"	, 200, 0, 25);
       _histSubJetDeltaR	= bookHistogram1D("SubJetDeltaR", 200, 0, 3.0);
