@@ -1,5 +1,10 @@
 * Rivet Jet Substructure Study
-
+** Building and running
+#+begin_example
+ rivet-buildplugin RivetMC_GENSTUDY_JETCHARGE.so MC_GENSTUDY_JETCHARGE.cc
+ rivet -a MC_GENSTUDY_JETCHARGE wInclusive50k.data -H wInclusive.aida
+#+end_example
+   
 ** Physics Motivation
 The big picture aim of this study is to provide an accurate picture of
 how different Monte Carlo generators handle creation of jets.  In
@@ -62,6 +67,24 @@ clusterPhotons is true, trackPhotons is false
 
 
 * Working notes (dirty and unorganized)
+
+** Delta R of subjets
+   - Look at min DeltaR max DeltaR or highest p_T pair may give
+     better subjets
+   - Not intrinsically correlated to subjet multiplicity
+* TODO: 
+  - Rename invariant mass of jets to jet mass
+  - ditto for invariant mass of subjets
+  - Remove skew and stddev from set of output plots, comment out in
+    code!
+  - Understand exactly how the normalization is working
+  - Email Carl with an update on software
+  - Run high statistics inclusive sample p_T cut at 35, 250k
+  - Reduce binning in rough plots
+  - Run over again with herwig and pythia 8 (inclusive) 
+    - Have to configure param file for herwig
+    - Search atlas software (or talk to Lei)
+
 Here's the issue: As you said before, I need to recluster the jets
 according to kt 0.6 in order to extract sensible subjets.  I do this
 with the line:
@@ -113,12 +136,13 @@ Take the hardest jet to cut against gluons from QCD.
    - if W+quark, then the charge is interesting
      Make table (conserving weak isospin) predicting what kind of
      quark will come with which W (charge) 
-     
+      
      Going to get more positive W's (or negative quarks)
      - Product charge W with quark charge to increase statistical
        power (histogram jet charge*W charge)
 
        - Histogram the W charge 
+
 
 ** Cuts
   Get Jets ordered by P_t
@@ -140,3 +164,4 @@ Any subjet calculation should be calculated in FasJet calculation class
 ** Presentation next week
   Feynman diagrams for all related processes
   
+
