@@ -59,7 +59,46 @@ clusterPhotons is true, trackPhotons is false
 | 16 f + fbar' -> g + W\pm |       29847 | 408870 |   8.814e-5 |
 | 31 f + g -> f' +  W\pm   |       20153 | 184959 |   5.937e-5 |
 |--------------------------+-------------+--------+------------|
+
+
 * Working notes (dirty and unorganized)
+Here's the issue: As you said before, I need to recluster the jets
+according to kt 0.6 in order to extract sensible subjets.  I do this
+with the line:
+#BEGIN_SRC c++
+PseudoJets constituents=jet.validated_cs()->constituents(jet);
+fastjet::ClusterSequence clusterSeq(constituents,fastjet::JetDefinition(fastjet::kt_algorithm,0.6)); 
+PseudoJets subJets=clusterSeq.exclusive_subjets_up_to(jet,3);
+#END_SRC 
+The issue is when clusterSeq.exlcusive_subjets_up_to(jet,3); is called.
+In the class ClusterSequence, an assertion is made that the clusterSeq
+is associated with the jet.  This fails when the code runs as:
+#BEGIN_EXAMPLE 
+python: ClusterSequence.cc:984: void fastjet::ClusterSequence::get_subhist_set(std::set<const fastjet::ClusterSequence::history_element*>&, const fastjet::PseudoJet&, double, int) const: Assertion `contains(jet)' failed.
+#END_EXAMPLE
+
+Which after reading the code leads to this definition of 'contains()':
+#BEGIN_SRC c++
+//----------------------------------------------------------------------
+// returns true if the cluster sequence contains this jet (i.e. jet's
+// structure is this cluster sequence's and the cluster history index
+// is in a consistent range)
+bool ClusterSequence::contains(const PseudoJet & jet) const {
+  return jet.cluster_hist_index() >= 0 
+    &&   jet.cluster_hist_index() < int(_history.size())
+    &&   jet.has_valid_cluster_sequence()
+    &&   jet.associated_cluster_sequence() == this;
+}
+#END_SRC
+
+I know that jet.has_valid_cluster_sequence() is true because I check
+that before I call my code.  I'm also assuming that the hist_index()
+parts pass as well (though I have no obvious way of checking).  I'm
+afraid its the last line that is failing because I made a copy of the
+associated_cluster_sequence when I reclustered!  
+
+
+
  - Do this analysis for low p_T W's 
  - Get rid of Phi distribution, come back if crazy things start happening
 
