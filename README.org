@@ -72,7 +72,7 @@ clusterPhotons is true, trackPhotons is false
    - Look at min DeltaR max DeltaR or highest p_T pair may give
      better subjets
    - Not intrinsically correlated to subjet multiplicity
-* TODO: 
+** TODO: 
   - Rename invariant mass of jets to jet mass
   - ditto for invariant mass of subjets
   - Remove skew and stddev from set of output plots, comment out in
