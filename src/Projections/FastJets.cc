@@ -293,6 +293,153 @@ namespace Rivet {
     }
     return reconst_jet;
   }
+  fastjet::JetAlgorithm FastJets::setJetAlgorithm(JetAlgName subJetAlgorithm) const
+  {
+    //Do we want to support all enums? This is only a subset...
+    switch(subJetAlgorithm)
+      {
+      case KT:
+	return fastjet::kt_algorithm;
+      case ANTIKT:
+	return fastjet::antikt_algorithm;
+      case CAM:
+	return fastjet::cambridge_algorithm;
+      case DURHAM:
+	return fastjet::ee_kt_algorithm;
+      default: 
+	cout << "No plugin jet algorithms accepted for Filter! Prepare to die!" << endl;
+	return fastjet::undefined_jet_algorithm;
+      }
+  }
+  
+  fastjet::PseudoJet FastJets::Filter(fastjet::PseudoJet jet, JetAlgName subjet_def, 
+				      int hardest,double subjet_R=0.3) const {
+    assert(clusterSeq());
+    //sanity check on the jet
+    if (jet.E() <= 0.0 || clusterSeq()->constituents(jet).size() == 0) {
+      return jet;
+    }
+    fastjet::Filter filter(fastjet::JetDefinition(setJetAlgorithm(subjet_def), subjet_R), fastjet::SelectorNHardest(hardest));
+    return filter(jet);
+  }
 
+  fastjet::PseudoJet FastJets::Trimmer(fastjet::PseudoJet jet, JetAlgName subjet_def, 
+				       double percentage, double subjet_R=0.3) const {
+    assert(clusterSeq());
+    //sanity check on the jet
+    if (jet.E() <= 0.0 || clusterSeq()->constituents(jet).size() == 0) {
+      return jet;
+    }
+    fastjet::Filter filter(fastjet::JetDefinition(setJetAlgorithm(subjet_def), subjet_R), fastjet::SelectorPtFractionMin(percentage));
+    return filter(jet);
+  }
+  fastjet::PseudoJet FastJets::Pruner(fastjet::PseudoJet jet, JetAlgName subjet_def, 
+						double zcut=0.1, double Rcut_factor=0.5) const {
+    //sanity check on the jet
+    assert(clusterSeq());
+    if (jet.E() <= 0.0 || clusterSeq()->constituents(jet).size() == 0) {
+      return jet;
+    }
+    //NOTE: Pruner sets the jet algorithm R to the maximum allowed, so setting it
+    //to 1 here only to follow jetalg syntax
+    //finally declare the filter and apply it to the jet
+    fastjet::Pruner pruner(fastjet::JetDefinition(setJetAlgorithm(subjet_def), 1), zcut, Rcut_factor);
+    return pruner(jet);
+  }
+  PseudoJets FastJets::GetAxes( int n_jets, 
+		PseudoJets inputJets, JetAlgName subjet_def, double subR) const {
 
+    assert(clusterSeq());
+    //sanity check
+    if ((signed) inputJets.size() < n_jets) { // Dirty cast...
+	std::cout << "Not enough input particles." << endl;
+	return inputJets;
+	}
+    //get subjets, return
+    fastjet::ClusterSequence sub_clust_seq(inputJets, setJetAlgorithm(subjet_def));
+    return sub_clust_seq.exclusive_jets(n_jets);
+  }
+
+  double FastJets::TauValue(double beta, double jet_rad, 
+	PseudoJets particles, PseudoJets axes) const {
+
+    double tauNum = 0.0;
+    double tauDen = 0.0;
+   
+    for (unsigned int i = 0; i < particles.size(); i++) {
+
+     	 // find minimum distance (set R large to begin)
+
+      double minR = 10000.0;
+      for (unsigned int j = 0; j < axes.size(); j++) {
+         double tempR = sqrt(particles[i].squared_distance(axes[j]));
+         if (tempR < minR) minR = tempR;
+      }
+
+	//calculate nominator and denominator
+      
+      tauNum += particles[i].perp() * pow(minR,beta);
+      tauDen += particles[i].perp() * pow(jet_rad,beta);
+    }
+	
+	//return N-subjettiness
+
+    return tauNum/tauDen;
+  }
+
+  vector<fastjet::PseudoJet> FastJets::UpdateAxes(double beta,
+	PseudoJets particles, PseudoJets axes) const {
+
+    vector<int> belongsto;
+    //no reason not to use foreach here
+    for (unsigned int i = 0; i < particles.size(); i++) {
+
+     	 // find minimum distance axis
+
+      int assign = 0;
+      double minR = 10000.0;
+      for (unsigned int j = 0; j < axes.size(); j++) {
+         double tempR = sqrt(particles[i].squared_distance(axes[j]));
+         if (tempR < minR) {
+            minR = tempR;
+            assign = j;
+	  }
+       }
+     belongsto.push_back(assign);
+    }
+
+	// iterative step
+    
+    double PI = 3.14159265359;
+    double deltaR2, distphi = 0.0;
+    vector<double> ynom, phinom, den;
+    ynom.resize(axes.size());
+    phinom.resize(axes.size());
+    den.resize(axes.size());
+
+    for (unsigned int i = 0; i < particles.size(); i++) {
+      distphi = particles[i].phi() - axes[belongsto[i]].phi();
+      deltaR2 = particles[i].squared_distance(axes[belongsto[i]]);
+      
+      if (abs(distphi) <= PI) phinom.at(belongsto[i]) += particles[i].perp() * particles[i].phi() * pow(deltaR2, (beta-2)/2);
+      else if ( distphi > PI) phinom.at(belongsto[i]) += particles[i].perp() * (-2 * PI + particles[i].phi()) * pow(deltaR2, (beta-2)/2);
+      else if ( distphi < PI) phinom.at(belongsto[i]) += particles[i].perp() * (+2 * PI + particles[i].phi()) * pow(deltaR2, (beta-2)/2);
+
+      ynom.at(belongsto[i]) += particles[i].perp() * particles[i].rap() * pow(deltaR2, (beta-2)/2);
+      
+      den.at(belongsto[i]) += particles[i].perp() * pow(deltaR2, (beta-2)/2);
+    }
+      
+    // declare new axes
+    vector<fastjet::PseudoJet> newaxes;
+    newaxes.resize(axes.size());
+    for (unsigned int j = 0; j < axes.size(); j++) {
+
+      if (den[j] == 0) newaxes.at(j) = axes[j];
+      else {
+	newaxes.at(j).reset_momentum_PtYPhiM(axes[j].perp(), ynom[j] / den[j], fmod( 2*PI + (phinom[j] / den[j]), 2*PI ), axes[j].perp()/2);
+      }
+    }
+    return newaxes;
+  }
 }

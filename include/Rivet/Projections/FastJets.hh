@@ -13,6 +13,9 @@
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 #include "fastjet/PseudoJet.hh"
+#include "fastjet/tools/Filter.hh"
+#include "fastjet/tools/Pruner.hh"
+#include "fastjet/Selector.hh"
 
 #include "fastjet/SISConePlugin.hh"
 #include "fastjet/ATLASConePlugin.hh"
@@ -184,6 +187,37 @@ namespace Rivet {
     /// Based on code from G.Salam, A.Davison.
     fastjet::PseudoJet filterJet(fastjet::PseudoJet jet, double& stingy_R, const double def_R) const;
 
+    /// Create a filter, run it over specified jet
+    /// Butterworth, Davison, Rubin and Salam, arXiv:0802.2470
+    fastjet::PseudoJet Filter(fastjet::PseudoJet jet, JetAlgName subjet_def, 
+				      int hardest,double subjet_R) const;
+
+    /// Create a trimmer, run it over specified jet
+    /// Krohn, Thaler and Wang, arXiv:0912.1342
+    fastjet::PseudoJet Trimmer(fastjet::PseudoJet jet, JetAlgName subjet_def, 
+				       double percentage, double subjet_R) const;
+
+    /// Create a pruner, run it over specified jet
+    /// Ellis, Vermilion and Walsh, arXiv:0903.5081
+    fastjet::PseudoJet Pruner(fastjet::PseudoJet jet, JetAlgName subjet_def, 
+						double zcut, double Rcut_factor) const;
+
+    /// Get N=n_jets subjets to be used for finding N-subjettiness
+    /// Thaler, Van Tilburg, arXiv:1011.2268
+    PseudoJets GetAxes(int n_jets, 
+			PseudoJets inputJets, JetAlgName subjet_def, double subR) const;
+
+    /// Get the N-subjettiness with respect to the subjet axes.
+    /// Thaler, Van Tilburg, arXiv:1011.2268
+    double TauValue(double beta, double jet_rad, 
+	PseudoJets particles, PseudoJets axes) const;
+
+    /// Update axes towards Tau(y, phi) minimum.
+    /// Thaler, Van Tilburg, arxiv:1108.2701
+    PseudoJets UpdateAxes(double beta,
+	PseudoJets particles, PseudoJets axes) const;
+
+
   private:
 
     Jets _pseudojetsToJets(const PseudoJets& pjets) const;
@@ -209,6 +243,7 @@ namespace Rivet {
 
 
   private:
+    fastjet::JetAlgorithm setJetAlgorithm(FastJets::JetAlgName subJetAlgorithm) const;
 
     /// Jet definition
     fastjet::JetDefinition _jdef;

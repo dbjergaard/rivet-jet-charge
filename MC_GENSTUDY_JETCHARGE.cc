@@ -54,34 +54,37 @@ namespace Rivet {
 
       // Histograms
 
-      _histJetMult	= bookHistogram1D("JetMult", 6, -0.5, 5.5);
+      _histJetMult		= bookHistogram1D("JetMult", 6, -0.5, 5.5);
       //Jet Kinematics
-      _histJetPt	= bookHistogram1D("JetPt"	, 50, 24, 70);
-      _histJetE		= bookHistogram1D("JetE"	, 25, 20, 200);
-      _histJetEta	= bookHistogram1D("JetEta"	, 25, -2, 2);
-      _histJetRapidity	= bookHistogram1D("JetRapidity"	, 25, -2, 2);
-      //_histJetPhi	= bookHistogram1D("JetPhi"	, 25, 0, TWOPI);
-      _histJetMass      = bookHistogram1D("JetMass"	, 100, 0, 40);
-      // Jet theoreticals
-      //_histJet2Mass	= bookHistogram1D("Jet2Mass"	, 100, 0, 100);
-      //_histJet3Mass	= bookHistogram1D("Jet3Mass"	, 100, 0, 100);
-			
-      _histSubJetMult	= bookHistogram1D("SubJetMult", 15, -0.5, 29.5);
-
+      _histJetPt		= bookHistogram1D("JetPt"	, 50, 24, 70);
+      _histJetE			= bookHistogram1D("JetE"	, 25, 20, 200);
+      _histJetEta		= bookHistogram1D("JetEta"	, 25, -2, 2);
+      _histJetRapidity		= bookHistogram1D("JetRapidity"	, 25, -2, 2);
+      //_histJetPhi		= bookHistogram1D("JetPhi"	, 25, 0, TWOPI);
+      _histJetMass		= bookHistogram1D("JetMass"	, 100, 0, 40);
+      //_histJet2Mass		= bookHistogram1D("Jet2Mass"	, 100, 0, 100);
+      //_histJet3Mass		= bookHistogram1D("Jet3Mass"	, 100, 0, 100);
+      _histSubJetMult		= bookHistogram1D("SubJetMult", 15, -0.5, 29.5);
       /*
-	_histSubJetSkew   = bookHistogram1D("SubJetSkew", 25, 0, 0.1); 
-	_histSubJetStddev = bookHistogram1D("SubJetStddev", 25, 0, 0.2); 
+	_histSubJetSkew		= bookHistogram1D("SubJetSkew", 25, 0, 0.1); 
+	_histSubJetStddev	= bookHistogram1D("SubJetStddev", 25, 0, 0.2); 
       */
+      _histSubJet2Mass		= bookHistogram1D("SubJet2Mass"	, 100, 0, 35);
+      _histSubJet3Mass		= bookHistogram1D("SubJet3Mass"	, 100, 0, 45);
+      _histSubJetDeltaR		= bookHistogram1D("SubJetDeltaR", 50, 0, 1.0);
+      _histSubJetMass		= bookHistogram1D("SubJetMass"	, 100, 0, 12);
+      _histSubJetSumEt		= bookHistogram1D("SubJetSumEt", 20, 0, 175);
 
-      _histSubJet2Mass	= bookHistogram1D("SubJet2Mass"	, 100, 0, 35);
-      _histSubJet3Mass	= bookHistogram1D("SubJet3Mass"	, 100, 0, 45);
-      _histSubJetDeltaR	= bookHistogram1D("SubJetDeltaR", 50, 0, 1.0);
-      _histSubJetMass	= bookHistogram1D("SubJetMass"	, 100, 0, 12);
-      _histSubJetSumEt	= bookHistogram1D("SubJetSumEt", 20, 0, 175);
+      //Jet Charge Histos
+      _histWJetCharge		=  bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
+      _histWCharge		=  bookHistogram1D("WCharge", 3, -1.5, 1.5);
+      //N-subjettiness histos	
+      _histJetMassTrim		= bookHistogram1D("JetMassTrim", 60, 0, 300);
+      _histJetMassPrune		= bookHistogram1D("JetMassPrune", 60, 0, 300);
+      _histNSubJettiness	= bookHistogram1D("NSubJettiness", 40, -0.5, 1.5);
+      _histNSubJettiness1Iter	= bookHistogram1D("NSubJettiness1Iter", 40, -0.5, 1.5);
+      _histNSubJettiness2Iter	= bookHistogram1D("NSubJettiness2Iter", 40, -0.5, 1.5);
 
-      //_histJetDipolarity= bookHistogram1D("JetDipolarity", 50, -2, 2);
-      _histWJetCharge    =  bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
-      _histWCharge    =  bookHistogram1D("WCharge", 3, -1.5, 1.5);
     }
     /// quickly calculate standard deviation of pt distribution in jets
     virtual void pt_stddev(const PseudoJets& jets, double& mean,double& stddev,const double N)
@@ -115,7 +118,7 @@ namespace Rivet {
 	     testJet[0].eta(),testJet[0].phi(),testJet[0].pt(),testJet[0].E());
       */
  
-     fastjet::ClusterSequence antiKTClusterSeq(jet.validated_cs()->constituents(jet),fastjet::JetDefinition(fastjet::antikt_algorithm,0.1));
+      fastjet::ClusterSequence antiKTClusterSeq(jet.validated_cs()->constituents(jet),fastjet::JetDefinition(fastjet::antikt_algorithm,0.1));
       PseudoJets smallSubJets=antiKTClusterSeq.inclusive_jets(ptmin);
       int smallJetMult = smallSubJets.size();
       _histSubJetMult->fill(smallJetMult,weight);
@@ -207,39 +210,41 @@ namespace Rivet {
     /// Finalize
     void finalize() 
     {
-
       /*
+      //Why oh why can't I use a std::map<AIDA::IHistogram1D*>
       foreach(BookedHistos::value_type H,Histograms)
 	scale(H.second,1/sumOfWeights());
       */
 
-      // Jet Kinematics
-      scale( _histJetMult , 1/(_histJetMult->sumAllBinHeights()));
-      scale( _histJetPt , 1/(_histJetPt->sumAllBinHeights()));
-      scale( _histJetE , 1/(_histJetE->sumAllBinHeights()));
-      scale( _histJetEta , 1/(_histJetEta->sumAllBinHeights()));
-      scale( _histJetRapidity , 1/(_histJetRapidity->sumAllBinHeights()));
-      //scale( _histJetPhi , 1/(_histJetPhi->sumAllBinHeights()));
-      scale( _histJetMass , 1/(_histJetMass->sumAllBinHeights()));
-	                                            
-      // Jet Theoreticals Theoreticals 	
-      //scale( _histJet2Mass , 1/(_histJet2Mass->sumAllBinHeights()));
-      //scale( _histJet3Mass , 1/(_histJet3Mass->sumAllBinHeights()));
-	                                            
-      scale( _histSubJet2Mass , 1/(_histSubJet2Mass->sumAllBinHeights()));
-      scale( _histSubJet3Mass , 1/(_histSubJet3Mass->sumAllBinHeights()));
-      scale( _histSubJetDeltaR , 1/(_histSubJetDeltaR->sumAllBinHeights()));
-      scale( _histSubJetMass , 1/(_histSubJetMass->sumAllBinHeights()));
-      scale( _histSubJetSumEt , 1/(_histSubJetSumEt->sumAllBinHeights()));
-	                                            
-      //scale( _histSubJetSkew , 1/(_histSubJetSkew->sumAllBinHeights()));
-      //scale( _histSubJetStddev , 1/(_histSubJetStddev->sumAllBinHeights()));
-      	                                            
-      //scale( _histJetDipolarity , 1/(_histJetDipolarity->sumAllBinHeights()));
-      scale( _histWJetCharge , 1/(_histWJetCharge->sumAllBinHeights()));
-      scale( _histWCharge , 1/(_histWCharge->sumAllBinHeights()));
-      //cout<<"Mean Charge: "<<_histWCharge->mean()<<"\u00B1"<<_histWCharge->rms()<<endl;
-      scale( _histSubJetMult , 1/(_histSubJetMult->sumAllBinHeights()));
+      normalize(_histJetMult);
+      normalize(_histJetPt);
+      normalize(_histJetE);
+      normalize(_histJetEta);
+      normalize(_histJetRapidity);
+      //normalize(_histJetPhi);
+      normalize(_histJetMass);
+
+      //normalize(_histJet2Mass);
+      //normalize(_histJet3Mass );
+
+      normalize(_histSubJet2Mass);
+      normalize(_histSubJet3Mass);
+      normalize(_histSubJetDeltaR);
+      normalize(_histSubJetMass);
+      normalize(_histSubJetSumEt);
+      //normalize(_histSubJetSkew);
+      //normalize(_histSubJetStddev);
+      //normalize(_histJetDipolarity,1.0);
+      normalize(_histWJetCharge);
+      normalize(_histWCharge);
+      normalize(_histSubJetMult);
+      normalize(_histJetMassTrim);
+      normalize(_histJetMassPrune);
+      normalize(_histNSubJettiness);
+      normalize(_histNSubJettiness1Iter);
+      normalize(_histNSubJettiness2Iter);
+
+      
     }
     //@}
   private:
@@ -271,10 +276,16 @@ namespace Rivet {
     AIDA::IHistogram1D *_histSubJetMass;
     AIDA::IHistogram1D *_histSubJetSumEt;
 
-    AIDA::IHistogram1D *_histJetDipolarity;
+    //Jet Charge
     AIDA::IHistogram1D *_histWJetCharge;    
     AIDA::IHistogram1D *_histWCharge;
     AIDA::IHistogram1D *_histSubJetMult;
+      //N-subjettiness histos	
+    AIDA::IHistogram1D *_histJetMassTrim;	
+    AIDA::IHistogram1D *_histJetMassPrune;		
+    AIDA::IHistogram1D *_histNSubJettiness;	
+    AIDA::IHistogram1D *_histNSubJettiness1Iter;	
+    AIDA::IHistogram1D *_histNSubJettiness2Iter;	
     //@}
 
   };
@@ -291,30 +302,35 @@ namespace Rivet {
  */
       /*
       // was 1/sumOfWeights()
-      normalize(_histJetMult ,1.0);
-      normalize(_histJetPt ,1.0);
-      normalize(_histJetE ,1.0);
-      normalize(_histJetEta ,1.0);
-      normalize(_histJetRapidity ,1.0);
-      //normalize(_histJetPhi ,1.0);
-      normalize(_histJetMass ,1.0);
-
-      //normalize(_histJet2Mass ,1.0);
-      //normalize(_histJet3Mass ,1.0);
-
-      normalize(_histSubJet2Mass ,1.0);
-      normalize(_histSubJet3Mass ,1.0);
-      normalize(_histSubJetDeltaR ,1.0);
-      normalize(_histSubJetMass ,1.0);
-      normalize(_histSubJetSumEt ,1.0);
-
-      //normalize(_histSubJetSkew ,1.0);
-      //normalize(_histSubJetStddev ,1.0);
-
-      //normalize(_histJetDipolarity,1.0);
-      normalize(_histWJetCharge ,1.0);
-      normalize(_histWCharge ,1.0);
-      normalize(_histSubJetMult ,1.0);
 
       */
 
+      /*
+      // Jet Kinematics
+      scale( _histJetMult , 1/(_histJetMult->sumAllBinHeights()));
+      scale( _histJetPt , 1/(_histJetPt->sumAllBinHeights()));
+      scale( _histJetE , 1/(_histJetE->sumAllBinHeights()));
+      scale( _histJetEta , 1/(_histJetEta->sumAllBinHeights()));
+      scale( _histJetRapidity , 1/(_histJetRapidity->sumAllBinHeights()));
+      //scale( _histJetPhi , 1/(_histJetPhi->sumAllBinHeights()));
+      scale( _histJetMass , 1/(_histJetMass->sumAllBinHeights()));
+	                                            
+      // Jet Theoreticals Theoreticals 	
+      //scale( _histJet2Mass , 1/(_histJet2Mass->sumAllBinHeights()));
+      //scale( _histJet3Mass , 1/(_histJet3Mass->sumAllBinHeights()));
+	                                            
+      scale( _histSubJet2Mass , 1/(_histSubJet2Mass->sumAllBinHeights()));
+      scale( _histSubJet3Mass , 1/(_histSubJet3Mass->sumAllBinHeights()));
+      scale( _histSubJetDeltaR , 1/(_histSubJetDeltaR->sumAllBinHeights()));
+      scale( _histSubJetMass , 1/(_histSubJetMass->sumAllBinHeights()));
+      scale( _histSubJetSumEt , 1/(_histSubJetSumEt->sumAllBinHeights()));
+	                                            
+      //scale( _histSubJetSkew , 1/(_histSubJetSkew->sumAllBinHeights()));
+      //scale( _histSubJetStddev , 1/(_histSubJetStddev->sumAllBinHeights()));
+      	                                            
+      //scale( _histJetDipolarity , 1/(_histJetDipolarity->sumAllBinHeights()));
+      scale( _histWJetCharge , 1/(_histWJetCharge->sumAllBinHeights()));
+      scale( _histWCharge , 1/(_histWCharge->sumAllBinHeights()));
+      //cout<<"Mean Charge: "<<_histWCharge->mean()<<"\u00B1"<<_histWCharge->rms()<<endl;
+      scale( _histSubJetMult , 1/(_histSubJetMult->sumAllBinHeights()));
+      */
