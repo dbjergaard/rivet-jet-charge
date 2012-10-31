@@ -356,7 +356,7 @@ namespace Rivet {
 	return inputJets;
 	}
     //get subjets, return
-    fastjet::ClusterSequence sub_clust_seq(inputJets, setJetAlgorithm(subjet_def));
+    fastjet::ClusterSequence sub_clust_seq(inputJets, fastjet::JetDefinition(setJetAlgorithm(subjet_def), subR));
     return sub_clust_seq.exclusive_jets(n_jets);
   }
 

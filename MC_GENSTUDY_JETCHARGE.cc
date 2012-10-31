@@ -79,6 +79,8 @@ namespace Rivet {
       _histWJetCharge		=  bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
       _histWCharge		=  bookHistogram1D("WCharge", 3, -1.5, 1.5);
       //N-subjettiness histos	
+      
+      _histJetMassFilt		= bookHistogram1D("JetMassFilt", 60, 0, 300);
       _histJetMassTrim		= bookHistogram1D("JetMassTrim", 60, 0, 300);
       _histJetMassPrune		= bookHistogram1D("JetMassPrune", 60, 0, 300);
       _histNSubJettiness	= bookHistogram1D("NSubJettiness", 40, -0.5, 1.5);
@@ -110,20 +112,11 @@ namespace Rivet {
       fastjet::ClusterSequence clusterSeq(jet.validated_cs()->constituents(jet),fastjet::JetDefinition(fastjet::kt_algorithm,0.6)); 
 
       PseudoJets subJets=clusterSeq.exclusive_jets_up_to(3);
-      /*
-      PseudoJets testJet=clusterSeq.exclusive_jets_up_to(1);
-      printf("Original jet: eta %f, phi %f, pt %f, E %f\n",
-	     jet.eta(),jet.phi(),jet.pt(),jet.E());
-      printf("     New Jet: eta %f, phi %f, pt %f, E %f\n",
-	     testJet[0].eta(),testJet[0].phi(),testJet[0].pt(),testJet[0].E());
-      */
  
       fastjet::ClusterSequence antiKTClusterSeq(jet.validated_cs()->constituents(jet),fastjet::JetDefinition(fastjet::antikt_algorithm,0.1));
       PseudoJets smallSubJets=antiKTClusterSeq.inclusive_jets(ptmin);
       int smallJetMult = smallSubJets.size();
       _histSubJetMult->fill(smallJetMult,weight);
-      /// may not be statistically correct to set stddev and skew to
-      /// zero for a sample size of 1
       /*
       if(smallJetMult > 1)
 	{
@@ -156,7 +149,6 @@ namespace Rivet {
 
     }
     /// Perform the per-event analysis
-
     void analyze(const Event& event) 
     {
 
@@ -181,6 +173,30 @@ namespace Rivet {
 	      if(jets.front().has_valid_cs())
 		analyzeSubJets(jets.front(),weight);
 
+	      foreach (const fastjet::PseudoJet& jet, jets) 
+		{
+		  _histJetMassFilt->fill(JetProjection.Filter(jet, FastJets::CAM, 0.3, 3).m(), weight);
+		  _histJetMassTrim->fill(JetProjection.Trimmer(jet, FastJets::CAM, 0.3, 0.03).m(), weight);
+		  _histJetMassPrune->fill(JetProjection.Pruner(jet, FastJets::CAM, 0.1, 0.4).m(), weight);
+		  PseudoJets constituents = jet.constituents();
+		  if (constituents.size() > 10) 
+		    {
+		      //todo slurp into one function call
+		      
+		      //Why does UpdateAxes return a copy of the
+		      //updated axes when it could just as wll operate
+		      //on a non-const reference?
+		      PseudoJets axes(JetProjection.GetAxes(2, constituents, FastJets::CAM, 0.5));
+		      double tau = JetProjection.TauValue(2, 1, constituents, axes);
+		      _histNSubJettiness->fill(tau, weight);
+		      vector<fastjet::PseudoJet> newaxes1 = JetProjection.UpdateAxes(2, constituents, axes);
+		      double tau1 = JetProjection.TauValue(2, 1, constituents, newaxes1);
+		      PseudoJets newaxes2 = JetProjection.UpdateAxes(2, constituents, newaxes1);
+		      double tau2 = JetProjection.TauValue(2, 1, constituents, newaxes2);
+		      _histNSubJettiness1Iter->fill(tau1, weight);
+		      _histNSubJettiness2Iter->fill(tau2, weight);
+		    }
+		}
 	      _histJetMass->fill(jets.front().m(),weight);
 	      _histJetPt->fill(jets.front().pt(),weight);	
 	      _histJetE->fill(jets.front().E(),weight);
@@ -238,6 +254,7 @@ namespace Rivet {
       normalize(_histWJetCharge);
       normalize(_histWCharge);
       normalize(_histSubJetMult);
+      normalize(_histJetMassFilt);
       normalize(_histJetMassTrim);
       normalize(_histJetMassPrune);
       normalize(_histNSubJettiness);
@@ -281,6 +298,7 @@ namespace Rivet {
     AIDA::IHistogram1D *_histWCharge;
     AIDA::IHistogram1D *_histSubJetMult;
       //N-subjettiness histos	
+    AIDA::IHistogram1D *_histJetMassFilt;
     AIDA::IHistogram1D *_histJetMassTrim;	
     AIDA::IHistogram1D *_histJetMassPrune;		
     AIDA::IHistogram1D *_histNSubJettiness;	
