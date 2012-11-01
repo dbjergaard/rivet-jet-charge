@@ -1,0 +1,204 @@
+#+TITLE:     Jet Substructure Observables in W+Jets events
+#+AUTHOR:    David Bjergaard
+#+EMAIL:     david.b@duke.edu
+#+DATE:      Tuesday, October 09th, 2012
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+#+startup: oddeven
+
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger]
+#+latex_header: \mode<beamer>{\usetheme{Madrid}}
+#+latex_header:\usepackage{feynmp}
+#+BEAMER_FRAME_LEVEL: 2
+
+#+COLUMNS: %20ITEM %13BEAMER_env(Env) %6BEAMER_envargs(Args) %4BEAMER_col(Col) %7BEAMER_extra(Extra)
+
+* Introduction
+\unitlength = 1mm
+** Jet Substructure
+   - Boost 2012 is looking into many substructure observables, I'm
+     looking into jet charge. 
+   - Jet Charge is defined as
+     $$
+     Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
+     $$
+     Put in words, its the sum of the charge of the constituent particles
+     weighted by the particle's transverse momentum. 
+** Relevant Physics
+*** Analysis :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.4
+    :END:
+   - I want to study jet charge.  To do this, I need as pure a sample
+     of charged jets as possible. $W^\pm$ production is great because
+     there is (usually) a recoiling quark that becomes a charged jet.
+*** Tree level diagram 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+    [[file:./w-jet-production-tree.png]]
+   - $\sigma_{gW^\pm}/\sigma_{tot}=0.60$
+   - $\sigma_{q^\prime W^\pm}/\sigma_{tot}=0.40$
+** QCD Gluons grow on trees!
+*** QCD Background 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.4
+    :END:
+    - Unfortunately QCD gluons are radiated, contributing uncharged
+      jets to background
+    - We're saved by momentum conservation: the real gluon or quark
+      jet recoils and carries most of the momentum of the W.  Take
+      the hardest $p_T$ jet as the tree-level jet. 
+*** Higher order diagrams 				    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+\includegraphics[scale=0.15]{./w-jet-production-qcd.png}
+** Analysis Cuts
+      - Jets are clustered using $\bar{k_T} 0.6$
+      - Selections on the Muon:
+	- $|\eta|<2.4$
+	- $p_T > 20 GeV/c$
+	- $\Delta R >0.4$ (Minimum delta R between muon and a jet)
+      - Selections on the W
+	- $40 GeV/c^2 < m_T < 1000 GeV/c^2$
+      - Selections on the highest $p_T$ Jet
+	- $|\eta|<2.5$
+* Preliminary Results
+** Charge Plots
+*** Charge of the W 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_WCharge.png}
+*** Charge of Jet*W 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_WJetCharge.png}
+** Sub-jet variables
+*** Sub-jet pairs :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJet2Mass.png}
+*** Sub-jet Triples :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJet3Mass.png}
+** Sub-jet variables (con't)
+*** Sub-jet mass 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJetMass.png}
+*** Sub-jet Multiplicity 				    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJetMult.png}
+** Sub-jet variables (con't)
+*** Sub-jet $\Delta R$ 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJetDeltaR.png}
+*** Sub-jet $\sum E_T$ 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJetSumEt.png}
+
+
+** Jet Kinematics
+*** Jet Energy 					      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetE.png}
+*** Jet $\eta$ 						    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetEta.png}
+
+** Jet Kinematics (con't)
+*** Jet Filtered Mass 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMassFilt.png}
+*** Jet Trimmed Mass 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMassTrim.png}
+** Jet Kinematics (con't)
+*** Jet Pruned Mass 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMassPrune.png}
+*** Jet Mass 						    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMass.png}
+** Jet Kinematics (con't)
+*** Jet Multiplicity 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMult.png}
+*** Jet $p_T$ 						    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetPt.png}
+** N-Subjettiness
+*** Jet N-Subjettiness 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_NSubJettiness.png}
+*** Jet N-Subjettiness 1 Iteration 			    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_NSubJettiness1Iter.png}
+** N-Subjettiness (con't)
+*** Jet N-Subjettiness 2 Iterations
+\includegraphics[scale=0.25]{../../plots/png/MC_GENSTUDY_JETCHARGE_NSubJettiness2Iter.png}
+

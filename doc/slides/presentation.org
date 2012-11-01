@@ -1,0 +1,201 @@
+#+TITLE:     Jet Substructure Observables in W+Jets events
+#+AUTHOR:    David Bjergaard
+#+EMAIL:     david.b@duke.edu
+#+DATE:      Tuesday, October 09th, 2012
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+#+startup: oddeven
+
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger]
+#+latex_header: \mode<beamer>{\usetheme{Madrid}}
+#+latex_header:\usepackage{feynmp}
+#+BEAMER_FRAME_LEVEL: 2
+
+#+COLUMNS: %20ITEM %13BEAMER_env(Env) %6BEAMER_envargs(Args) %4BEAMER_col(Col) %7BEAMER_extra(Extra)
+
+* Introduction
+\unitlength = 1mm
+** Big Picture
+   Q: Who watches the watchmen?
+   - Meaning, if we don't understand the intimate details of Monte
+     Carlo (MC) data, how can we hope to understand new physics in real data?
+   - To this end, the different MC generators can watch each other.
+   - The variables which aren't modelled well will show up in comparisons
+     to the various generators.
+   A: God Does. 
+   - Eventually we do an experiment, measure *real* data and compare
+     to our expectations. 
+** Jet Substructure
+   - The LHC offers unprecedented granularity in calorimetry
+     data.
+   - Jet clustering algorithms strip this granularity away in order
+     to construct 4-vectors representing the initial state particles
+     for a particular process
+   - Can we take the granular information stored in the calorimeters
+     and use it to extract observables traceable to the initial state particles?
+   - Boost 2012 is looking into many substructure observables, I'm
+     looking into jet charge. 
+   - Jet Charge is defined as
+     $$
+     Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
+     $$
+     Put in words, its the sum of the charge of the constituent particles
+     weighted by the particle's transverse momentum. 
+** A generic successive recombination jet clustering algorithm
+   The main thrust of a jet clustering algorithm is:
+   1. Assume each calorimeter cluster is a jet.  Define a metric to measure
+      separation of proto-jets. Create a list of these distances
+   2. Take the minimum number in the list and associate that pair of
+      proto-jets as one proto-jet, remove the pair and add the new
+      proto-jet to the current list of jets
+   3. Repeat 1-2 on the list of proto-jets until the remaining
+      list of proto-jets are a predefined minimum distance apart.
+   The result is a list of jets which form a list of 4-vectors
+   (hopefully) representing the initial state particles.
+** A generic jet clustering algorithm (con't)
+   - Algorithms differ in how the metric defining separation is
+     implemented ($k_T, \bar{k_T}$, Cambridge-Aachen, etc).
+   - Other approaches exist, and jet clustering is an area of active
+     research
+   - The process of folding proto-jets into a final set of jets has
+     to be reverse to study the sub-jets (and hence jet substructure)
+** Relevant Physics
+*** Analysis :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.4
+    :END:
+   - I want to study jet charge.  To do this, I need as pure a sample
+     of charged jets as possible. $W^\pm$ production is great because
+     there is (usually) a recoiling quark that becomes a charged jet.
+*** Tree level diagram 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+    [[file:./w-jet-production-tree.png]]
+** QCD Gluons grow on trees!
+*** QCD Background 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.4
+    :END:
+    - Unfortunately QCD gluons are radiated, contributing uncharged
+      jets to background
+    - We're saved by momentum conservation: the real gluon or quark
+      jet recoils and carries most of the momentum of the W.  Take
+      the hardest $p_T$ jet as the tree-level jet. 
+*** Higher order diagrams 				    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+\includegraphics[scale=0.15]{./w-jet-production-qcd.png}
+** Analysis Cuts
+      - Jets are clustered using $\bar{k_T} 0.6
+      - Selections on the Muon:
+	- $|\eta|<2.4$
+	- $p_T > 20 GeV/c$
+	- $\Delta R >0.4$ (Maximum delta R between muon and a jet)
+      - Selections on the W
+	- $40 GeV/c^2 < m_T < 1000 GeV/c^2$
+      - Selections on the highest $p_T$ Jet
+	- $|\eta|<2.5$
+* Rivet Framework 
+** Rivet Overview (my biased impressions)
+   - The Rivet framework is a tool for unified monte carlo
+     analysis. This means that I can write generator agnostic code
+     that has a common interface and produce plots.
+   - The Histogramming interface needs work, but this is being
+     addressed in a future release
+   - Like most HEP software, its a pain in the ass to install, and it
+     has a few quirks when using it.
+   - Using it is a joy, the Rivet team has stripped away all of the
+     bookkeeping stuff that bogs down the development of an
+     analysis.
+   - The flip side of this is that when you break something down/up
+     stream from your code its harder to track down and fix.
+** Rivet Framework
+   - For the motivated reader, see my [[http://hep-atlas.phy.duke.edu/InstallationNotes][Duke wiki for installation notes]]
+   - Rivet uses the concept of projections (in the sense of a screen
+     projector) to extract information from a Monte Carlo event.
+   - Eventually everything has to be compared to data, so rivet
+     insulates the user from theoretically ill-defined objects (MC
+     truth is *off* the table)
+** Example projection
+   - Rivet comes pre-packaged with a handful of useful
+     projections. Implementing all of my semileptonic
+     W selection cuts above is as simple as:
+*** W Tagger :BMCOL:B_block:
+    :PROPERTIES:
+    :BEAMER_col: 1.0
+    :BEAMER_env: block
+    :END:
+#+name: wtagger
+#+begin_src c++ :results output :exports both
+      std::vector<std::pair<double, double > > muonEtaRanges;
+      muonEtaRanges.push_back(make_pair(-2.4,2.4));
+      WFinder muWFinder(fs, muonEtaRanges, 20*GeV, MUON, 
+			40*GeV,1000*GeV,25*GeV,0.4,
+                        true,false,80.4,true);
+#+end_src
+
+clusterPhotons is true, trackPhotons is false
+** Agile and Rivet trick
+   - A neat trick is to fool Rivet into reading data from an ascii
+     file rather than a named pipe. This means I can use AGILe to
+     generate data once, and rerun the analysis without wasting CPU
+     cycles regenerating data!
+*** Slick Trick snippet :BMCOL:B_block:
+    :PROPERTIES:
+    :BEAMER_col: 1.0
+    :BEAMER_env: block
+    :END:
+#+begin_example
+$ agile-runmc Pythia6:426 --beams=LHC:7000 -n 50000 
+\ -P wjProduction_gluonsOnly.pars -o W+gluons50k.fifo 
+\ &> W+gluons50kGenOutput.txt &
+$ rivet -a MC_GENSTUDY_JETCHARGE W+gluons50k.fifo           
+#+end_example
+* Preliminary Results
+** Invariant mass Plots
+*** Sub-jet pairs :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJet2Mass.png}
+*** Sub-jet Triples :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_SubJet3Mass.png}
+** Charge Plots
+*** Charge of the W 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_WCharge.png}
+*** Charge of Jet*W 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_WJetCharge.png}
+* Future
+- Update Boost 2012 working group with my progress
+- Look into ATLAS gluon/quark tagging at Harvard
+  - First pass: Cut on variables that are most separated
+  - If the tagging algorithm is easy to implement, write it and look
+    at the Jet Charge of the resulting distributions
