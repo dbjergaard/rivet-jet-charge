@@ -189,10 +189,10 @@ namespace Rivet {
 		      PseudoJets axes(JetProjection.GetAxes(2, constituents, FastJets::CAM, 0.5));
 		      double tau = JetProjection.TauValue(2, 1, constituents, axes);
 		      _histNSubJettiness->fill(tau, weight);
-		      vector<fastjet::PseudoJet> newaxes1 = JetProjection.UpdateAxes(2, constituents, axes);
-		      double tau1 = JetProjection.TauValue(2, 1, constituents, newaxes1);
-		      PseudoJets newaxes2 = JetProjection.UpdateAxes(2, constituents, newaxes1);
-		      double tau2 = JetProjection.TauValue(2, 1, constituents, newaxes2);
+		      JetProjection.UpdateAxes(2, constituents, axes);
+		      double tau1 = JetProjection.TauValue(2, 1, constituents, axes);
+		      JetProjection.UpdateAxes(2, constituents, axes);
+		      double tau2 = JetProjection.TauValue(2, 1, constituents, axes);
 		      _histNSubJettiness1Iter->fill(tau1, weight);
 		      _histNSubJettiness2Iter->fill(tau2, weight);
 		    }
