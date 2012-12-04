@@ -74,7 +74,7 @@ namespace Rivet {
       _histSubJetDeltaR		= bookHistogram1D("SubJetDeltaR", 50, 0, 1.0);
       _histSubJetMass		= bookHistogram1D("SubJetMass"	, 100, 0, 12);
       _histSubJetSumEt		= bookHistogram1D("SubJetSumEt", 20, 0, 175);
-
+      
       //Jet Charge Histos
       _histWJetCharge		=  bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
       _histWCharge		=  bookHistogram1D("WCharge", 3, -1.5, 1.5);
@@ -175,9 +175,9 @@ namespace Rivet {
 
 	      foreach (const fastjet::PseudoJet& jet, jets) 
 		{
-		  _histJetMassFilt->fill(JetProjection.Filter(jet, FastJets::CAM, 0.3, 3).m(), weight);
-		  _histJetMassTrim->fill(JetProjection.Trimmer(jet, FastJets::CAM, 0.3, 0.03).m(), weight);
-		  _histJetMassPrune->fill(JetProjection.Pruner(jet, FastJets::CAM, 0.1, 0.4).m(), weight);
+		  _histJetMassFilt->fill(JetProjection.Filter(jet, FastJets::CAM, 3, 0.3).m(), weight);
+		  _histJetMassTrim->fill(JetProjection.Trimmer(jet, FastJets::CAM, 0.03, 0.3).m(), weight);
+		  _histJetMassPrune->fill(JetProjection.Pruner(jet, FastJets::CAM, 0.4, 0.1).m(), weight);
 		  PseudoJets constituents = jet.constituents();
 		  if (constituents.size() > 10) 
 		    {
