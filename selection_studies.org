@@ -1,0 +1,62 @@
+* Pythia6 config notes:
+CKIN(x) accesses kinematic cuts
+MSUB(x) turns on/off subprocesses a la carte, requires MSEL 0
+MDME(190-209,1) handles decay of W
+MDME(206-208,1) handles leptonic W decays
+
+Vanilla:
+| Cut summary: |       |
+|--------------+-------|
+| Inclusive    | 25000 |
+| Found W      |  1348 |
+| >1 Jet       |    65 |
+| Fiducial     |    52 |
+Mean Jet Charge: -0.0188074 +/- 0.0629395
+Time: 398s
+
+CKIN(3) 30D0
+CKIN(7) -4
+CKIN(8) 4
+| Cut summary: |       |
+|--------------+-------|
+| Inclusive    | 25000 |
+| Found W      |  1407 |
+| >1 Jet       |  1056 |
+| Fiducial     |   807 |
+Mean Jet Charge: -0.0214525 +/- 0.0562976
+Time: 430s
+
+CKIN(1) 30D0
+CKIN(7) -4
+CKIN(8) 4
+Cut summary: 
+| Inclusive | 25000 | 
+| Found W   | 1388 | 
+| >1 Jet    | 59 | 
+| Fiducial  | 41 | 
+Mean Jet Charge: -0.0278109 +/- 0.0616448
+Time: 397s
+
+W->Muons only; eta < 2.5
+Cut summary: 
+| Inclusive | 25000 | 
+| Found W   | 13260 | 
+| >1 Jet    | 9654 | 
+| Fiducial  | 7495 | 
+Mean Jet Charge: -0.0199746 +/- 0.0576004
+Time: 469s
+
+W->Muons only; eta < 2.25
+Cut summary: 
+| Inclusive | 25000 | 
+| Found W   | 14428 | 
+| >1 Jet    | 10579 | 
+| Fiducial  | 8650 | 
+Mean Jet Charge: -0.0198153 +/- 0.0580426
+* Herwig++ 
+Cut summary: 
+| Inclusive | 25000 | 
+| Found W   | 10488 | 
+| >1 Jet    | 9547 | 
+| Fiducial  | 7769 | 
+Mean Jet Charge: -0.0063713 +/- 0.0777918
