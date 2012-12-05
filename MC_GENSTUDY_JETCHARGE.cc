@@ -27,7 +27,7 @@ namespace Rivet {
     /// Constructor
     MC_GENSTUDY_JETCHARGE()
       : Analysis("MC_GENSTUDY_JETCHARGE")
-    {    }
+    { for(unsigned int i=0; i < 4; i++) nPassing[i]=0;    }
 
 
   public:
@@ -106,7 +106,6 @@ namespace Rivet {
       //double ptstddev	= 0.0;
       //double ptmean	= 0.0;
       //double ptskew	= 0.0;
-
       double ptmin=0.5*GeV;
       double sumEt=0.0;
       fastjet::ClusterSequence clusterSeq(jet.validated_cs()->constituents(jet),fastjet::JetDefinition(fastjet::kt_algorithm,0.6)); 
@@ -151,12 +150,11 @@ namespace Rivet {
     /// Perform the per-event analysis
     void analyze(const Event& event) 
     {
-
+      nPassing[0]++;
       const WFinder& muWFinder = applyProjection<WFinder>(event,"muWFinder");
       if (muWFinder.bosons().size() != 1)
-      {
 	vetoEvent;
-      }
+      nPassing[1]++;
 
       const double weight = event.weight();
       const FastJets& JetProjection = applyProjection<FastJets>(event, "Jets");
@@ -164,6 +162,7 @@ namespace Rivet {
 
       if (jets.size() > 0) 
 	{
+	  nPassing[2]++;
 	  unsigned int jetMult=jets.size();
 	  _histJetMult->fill(jetMult);
 	  /// Rather than loop over all jets, just take the first hard
@@ -183,9 +182,6 @@ namespace Rivet {
 		    {
 		      //todo slurp into one function call
 		      
-		      //Why does UpdateAxes return a copy of the
-		      //updated axes when it could just as wll operate
-		      //on a non-const reference?
 		      PseudoJets axes(JetProjection.GetAxes(2, constituents, FastJets::CAM, 0.5));
 		      double tau = JetProjection.TauValue(2, 1, constituents, axes);
 		      _histNSubJettiness->fill(tau, weight);
@@ -197,6 +193,7 @@ namespace Rivet {
 		      _histNSubJettiness2Iter->fill(tau2, weight);
 		    }
 		}
+	      nPassing[3]++;
 	      _histJetMass->fill(jets.front().m(),weight);
 	      _histJetPt->fill(jets.front().pt(),weight);	
 	      _histJetE->fill(jets.front().E(),weight);
@@ -231,7 +228,14 @@ namespace Rivet {
       foreach(BookedHistos::value_type H,Histograms)
 	scale(H.second,1/sumOfWeights());
       */
-
+      cout<<"Cut summary: "<<endl;
+      cout<<"| Inclusive | "<<nPassing[0]<< " | "<<endl;
+      cout<<"| Found W   | "<<nPassing[1]<< " | "<<endl;
+      cout<<"| >1 Jet    | "<<nPassing[2]<< " | "<<endl;
+      cout<<"| Fiducial  | "<<nPassing[3]<< " | "<<endl;
+      
+      cout<<"Mean Jet Charge: "<<_histWJetCharge->mean()<<" +/- "<<_histWJetCharge->rms()<<endl;
+      
       normalize(_histJetMult);
       normalize(_histJetPt);
       normalize(_histJetE);
@@ -261,7 +265,6 @@ namespace Rivet {
       normalize(_histNSubJettiness1Iter);
       normalize(_histNSubJettiness2Iter);
 
-      
     }
     //@}
   private:
@@ -305,7 +308,8 @@ namespace Rivet {
     AIDA::IHistogram1D *_histNSubJettiness1Iter;	
     AIDA::IHistogram1D *_histNSubJettiness2Iter;	
     //@}
-
+    // Event count for efficiency study
+    int nPassing[4];
   };
 
 
