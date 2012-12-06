@@ -54,9 +54,11 @@ Cut summary:
 | Fiducial  | 8650 | 
 Mean Jet Charge: -0.0198153 +/- 0.0580426
 * Herwig++ 
-Cut summary: 
-| Inclusive | 25000 | 
-| Found W   | 10488 | 
-| >1 Jet    | 9547 | 
-| Fiducial  | 7769 | 
+| Cut summary: |       |
+|--------------+-------|
+| Inclusive    | 25000 |
+| Found W      | 10488 |
+| >1 Jet       |  9547 |
+| Fiducial     |  7769 |
 Mean Jet Charge: -0.0063713 +/- 0.0777918
+
