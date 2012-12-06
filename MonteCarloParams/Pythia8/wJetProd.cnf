@@ -1,1 +1,4 @@
-blah
+Main:numberOfEvents = 25000
+PhaseSpace:pTHatMin = 30
+WeakBosonAndParton:qqbar2Wg = on
+WeakBosonAndParton:qg2Wq = on
