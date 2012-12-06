@@ -50,8 +50,8 @@ int main(int argc, char* argv[])
 	  cout << " Event generation aborted prematurely, owing to error!\n"; 
 	  break;
 	}
-      ToHepMC.fill_next_event( pythia, hepmcevt );
       HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
+      ToHepMC.fill_next_event( pythia, hepmcevt );
       ascii_io << hepmcevt;
       delete hepmcevt;
     }
