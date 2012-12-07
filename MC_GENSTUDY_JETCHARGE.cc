@@ -57,8 +57,8 @@ namespace Rivet {
 
       _histJetMult		= bookHistogram1D("JetMult", 6, -0.5, 5.5);
       //Jet Kinematics
-      _histJetPt		= bookHistogram1D("JetPt"	, 50, 24, 70);
-      _histJetE			= bookHistogram1D("JetE"	, 25, 20, 200);
+      _histJetPt		= bookHistogram1D("JetPt"	, 50, 33, 300);
+      _histJetE			= bookHistogram1D("JetE"	, 25, 20, 300);
       _histJetEta		= bookHistogram1D("JetEta"	, 25, -2, 2);
       _histJetRapidity		= bookHistogram1D("JetRapidity"	, 25, -2, 2);
       //_histJetPhi		= bookHistogram1D("JetPhi"	, 25, 0, TWOPI);
@@ -74,20 +74,20 @@ namespace Rivet {
       _histSubJet3Mass		= bookHistogram1D("SubJet3Mass"	, 100, 0, 45);
       _histSubJetDeltaR		= bookHistogram1D("SubJetDeltaR", 50, 0, 1.0);
       _histSubJetMass		= bookHistogram1D("SubJetMass"	, 100, 0, 12);
-      _histSubJetSumEt		= bookHistogram1D("SubJetSumEt", 20, 0, 175);
+      _histSubJetSumEt		= bookHistogram1D("SubJetSumEt", 30, 0, 175);
 
       //Jet Charge Histos
       _histWJetCharge		= bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
       _histWCharge		= bookHistogram1D("WCharge", 3, -1.5, 1.5);
-      _hist2DJetChargeWPt       = bookHistogram2D("JetChargeVsWPt",50,-0.3,0.3,50,24,100);
+      _hist2DJetChargeWPt       = bookHistogram2D("JetChargeVsWPt",50,-0.3,0.3,50,24,300);
       //N-subjettiness histos	
       
-      _histJetMassFilt		= bookHistogram1D("JetMassFilt", 60, 0, 300);
-      _histJetMassTrim		= bookHistogram1D("JetMassTrim", 60, 0, 300);
-      _histJetMassPrune		= bookHistogram1D("JetMassPrune", 60, 0, 300);
-      _histNSubJettiness	= bookHistogram1D("NSubJettiness", 40, -0.5, 1.5);
-      _histNSubJettiness1Iter	= bookHistogram1D("NSubJettiness1Iter", 40, -0.5, 1.5);
-      _histNSubJettiness2Iter	= bookHistogram1D("NSubJettiness2Iter", 40, -0.5, 1.5);
+      _histJetMassFilt		= bookHistogram1D("JetMassFilt", 60, 0, 50);
+      _histJetMassTrim		= bookHistogram1D("JetMassTrim", 60, 0, 50);
+      _histJetMassPrune		= bookHistogram1D("JetMassPrune", 60, 0, 20);
+      _histNSubJettiness	= bookHistogram1D("NSubJettiness", 40, -0.005, 1.005);
+      _histNSubJettiness1Iter	= bookHistogram1D("NSubJettiness1Iter", 40, -0.005, 1.005);
+      _histNSubJettiness2Iter	= bookHistogram1D("NSubJettiness2Iter", 40, -0.005, 1.005);
 
     }
     /// quickly calculate standard deviation of pt distribution in jets
