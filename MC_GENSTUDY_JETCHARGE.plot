@@ -171,6 +171,17 @@ LegendYPos=0.95
 LegendXPos=0.60
 # END PLOT
 
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetChargeVsWPt$
+Title= Jet charge ($Q_j Q_W$) vs $W p_\perp$
+XLabel=$e^2$
+YLabel=$p_\perp$ (GeV/c)
+ZLabel=$\int f(x) dx \equiv 1$ 
+LogY=0
+LogX=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/WCharge$
 Title= Charge of tagged W
 XLabel=e
