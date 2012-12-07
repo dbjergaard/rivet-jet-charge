@@ -17,6 +17,7 @@
 
 // Histogram booking
 #include "LWH/Histogram1D.h"
+#include "LWH/Histogram2D.h"
 
 namespace Rivet {
 
@@ -74,10 +75,11 @@ namespace Rivet {
       _histSubJetDeltaR		= bookHistogram1D("SubJetDeltaR", 50, 0, 1.0);
       _histSubJetMass		= bookHistogram1D("SubJetMass"	, 100, 0, 12);
       _histSubJetSumEt		= bookHistogram1D("SubJetSumEt", 20, 0, 175);
-      
+
       //Jet Charge Histos
-      _histWJetCharge		=  bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
-      _histWCharge		=  bookHistogram1D("WCharge", 3, -1.5, 1.5);
+      _histWJetCharge		= bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
+      _histWCharge		= bookHistogram1D("WCharge", 3, -1.5, 1.5);
+      _hist2DJetChargeWPt       = bookHistogram2D("JetChargeVsWPt",50,-0.3,0.3,50,24,100);
       //N-subjettiness histos	
       
       _histJetMassFilt		= bookHistogram1D("JetMassFilt", 60, 0, 300);
@@ -201,8 +203,9 @@ namespace Rivet {
 	      _histJetRapidity->fill(jets.front().rapidity(),weight); 
 	      //histJetPhi->fill(jets.front().phi(),weight);	
 	      double wCharge=PID::charge(muWFinder.bosons().front().pdgId())+0.0;//dirty cast 
-	  
-	      _histWJetCharge->fill(wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV),weight);
+	      double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
+	      _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
+	      _histWJetCharge->fill(jetCharge,weight);
 	      _histWCharge->fill(wCharge,weight);
 	      //_histJetDipolarity->fill(JetProjection.Dipolarity(jets.front(),0.4),weight);
 	    }	      
@@ -257,6 +260,7 @@ namespace Rivet {
       //normalize(_histJetDipolarity,1.0);
       normalize(_histWJetCharge);
       normalize(_histWCharge);
+      normalize(_hist2DJetChargeWPt);
       normalize(_histSubJetMult);
       normalize(_histJetMassFilt);
       normalize(_histJetMassTrim);
@@ -300,6 +304,7 @@ namespace Rivet {
     AIDA::IHistogram1D *_histWJetCharge;    
     AIDA::IHistogram1D *_histWCharge;
     AIDA::IHistogram1D *_histSubJetMult;
+    AIDA::IHistogram2D *_hist2DJetChargeWPt;
       //N-subjettiness histos	
     AIDA::IHistogram1D *_histJetMassFilt;
     AIDA::IHistogram1D *_histJetMassTrim;	
