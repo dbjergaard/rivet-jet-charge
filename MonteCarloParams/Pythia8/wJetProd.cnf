@@ -4,3 +4,4 @@ WeakBosonAndParton:qqbar2Wg = on
 WeakBosonAndParton:qg2Wq = on
 24:onMode = off
 24:onIfAny = 13 14
+Random:seed = 1234
