@@ -80,7 +80,7 @@ namespace Rivet {
       _histWJetCharge		= bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
       _histWCharge		= bookHistogram1D("WCharge", 3, -1.5, 1.5);
       _hist2DJetChargeWPt       = bookHistogram2D("JetChargeVsWPt",50,-0.3,0.3,50,24,300);
-      _hist2DJetPullThetaT      = bookHistogram2D("JetPullThetaT",50,-PI,PI,50,0,0.04);
+      _histJetPullTy             = bookHistogram1D("JetPullThetaTy",50,0,0.04);
 
       //N-subjettiness histos	
       
@@ -211,7 +211,7 @@ namespace Rivet {
 	      _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
 	      _histWJetCharge->fill(jetCharge,weight);
 	      _histWCharge->fill(wCharge,weight);
-	      _hist2DJetPullThetaT->fill(tvec.second,tvec.first);
+	      _histJetPullTy->fill(tvec.first*cos(tvec.second),weight);
 	    }	      
 
 	}
@@ -257,7 +257,7 @@ namespace Rivet {
       normalize(_histWJetCharge);
       normalize(_histWCharge);
       normalize(_hist2DJetChargeWPt);
-      normalize(_hist2DJetPullThetaT);
+      normalize(_histJetPullTy);
       normalize(_histSubJetMult);
       normalize(_histJetMassFilt);
       normalize(_histJetMassTrim);
@@ -302,7 +302,7 @@ namespace Rivet {
     AIDA::IHistogram1D *_histWCharge;
     AIDA::IHistogram1D *_histSubJetMult;
     AIDA::IHistogram2D *_hist2DJetChargeWPt;
-    AIDA::IHistogram2D *_hist2DJetPullThetaT;
+    AIDA::IHistogram1D *_histJetPullTy;
       //N-subjettiness histos	
     AIDA::IHistogram1D *_histJetMassFilt;
     AIDA::IHistogram1D *_histJetMassTrim;	
