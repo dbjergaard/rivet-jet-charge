@@ -1,7 +1,7 @@
 # Compile macros using ROOT
 CC=g++
 
-RIVET_PREFIX=/home/dave/rivet/local
+RIVET_PREFIX=$(HOME)/rivet/local
 export PATH:=$(RIVET_PREFIX)/bin:$(PATH)
 export PATH:=$(RIVET_PREFIX)/bin:$(PATH)
 export LD_LIBRARY_PATH:=$(RIVET_PREFIX)/lib:$(LD_LIBRARY_PATH)
@@ -9,7 +9,7 @@ export LD_LIBRARY_PATH:=$(RIVET_PREFIX)/lib:$(LD_LIBRARY_PATH)
 INCDIR=$(PWD)/include
 WFLAGS=-Wall -Wextra
 CFLAGS=-m64 -pg -ggdb -I$(RIVET_PREFIX)/include -I$(INCDIR) -O0 $(WFLAGS)
-LDFLAGS=-m64 -pg -L$(RIVET_PREFIX)/lib 	-L$(RIVET_PREFIX)/lib/archive -lpythia8 -llhapdfdummy \
+LDFLAGS=-m64 -pg -L$(RIVET_PREFIX)/lib 	-L$(RIVET_PREFIX)/lib/archive -lpythia8 -lLHAPDF \
 	-lhepmcinterface -lHepMC
 
 
