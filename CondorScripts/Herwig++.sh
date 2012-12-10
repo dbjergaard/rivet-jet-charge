@@ -7,5 +7,5 @@ source ${RIVET_PREFIX}/rivetenv.sh
 source ${RIVET_PREFIX}/agileenv.sh
 cd ${RIVET_ANALYSIS_DIR}/MonteCarloParams/Herwig++/
 export RIVET_ANALYSIS_PATH=${RIVET_ANALYSIS_DIR}
-Herwig++ run -N 25000 -s 1370${JOB_ID} --tag=`echo "'run${JOB_ID}'"` LHC.run
+Herwig++ run -N 25000 -s 1370${JOB_ID} --tag=`echo "_part${JOB_ID}"` LHC.run
 

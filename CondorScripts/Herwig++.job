@@ -17,4 +17,4 @@ get_env = True
 Notification = Never
 
 Arguments = $(Process)
-Queue 20
+Queue 40

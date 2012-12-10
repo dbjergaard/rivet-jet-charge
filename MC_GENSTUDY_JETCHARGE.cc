@@ -28,7 +28,7 @@ namespace Rivet {
     /// Constructor
     MC_GENSTUDY_JETCHARGE()
       : Analysis("MC_GENSTUDY_JETCHARGE")
-    { for(unsigned int i=0; i < 4; i++) nPassing[i]=0;    }
+    { for(unsigned int i=0; i < 4; i++) _nPassing[i]=0;    }
 
 
   public:
@@ -80,6 +80,8 @@ namespace Rivet {
       _histWJetCharge		= bookHistogram1D("WJetCharge", 50, -0.3, 0.3);
       _histWCharge		= bookHistogram1D("WCharge", 3, -1.5, 1.5);
       _hist2DJetChargeWPt       = bookHistogram2D("JetChargeVsWPt",50,-0.3,0.3,50,24,300);
+      _hist2DJetPullThetaT      = bookHistogram2D("JetPullThetaT",50,-PI,PI,50,0,0.04);
+
       //N-subjettiness histos	
       
       _histJetMassFilt		= bookHistogram1D("JetMassFilt", 60, 0, 50);
@@ -152,11 +154,11 @@ namespace Rivet {
     /// Perform the per-event analysis
     void analyze(const Event& event) 
     {
-      nPassing[0]++;
+      _nPassing[0]++;
       const WFinder& muWFinder = applyProjection<WFinder>(event,"muWFinder");
       if (muWFinder.bosons().size() != 1)
 	vetoEvent;
-      nPassing[1]++;
+      _nPassing[1]++;
 
       const double weight = event.weight();
       const FastJets& JetProjection = applyProjection<FastJets>(event, "Jets");
@@ -164,7 +166,7 @@ namespace Rivet {
 
       if (jets.size() > 0) 
 	{
-	  nPassing[2]++;
+	  _nPassing[2]++;
 	  unsigned int jetMult=jets.size();
 	  _histJetMult->fill(jetMult);
 	  /// Rather than loop over all jets, just take the first hard
@@ -195,7 +197,7 @@ namespace Rivet {
 		      _histNSubJettiness2Iter->fill(tau2, weight);
 		    }
 		}
-	      nPassing[3]++;
+	      _nPassing[3]++;
 	      _histJetMass->fill(jets.front().m(),weight);
 	      _histJetPt->fill(jets.front().pt(),weight);	
 	      _histJetE->fill(jets.front().E(),weight);
@@ -204,20 +206,14 @@ namespace Rivet {
 	      //histJetPhi->fill(jets.front().phi(),weight);	
 	      double wCharge=PID::charge(muWFinder.bosons().front().pdgId())+0.0;//dirty cast 
 	      double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
+	      std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
+	      //std::cout<<"mag: "<<tvec.first<<"theta: "<<tvec.second<<endl;
 	      _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
 	      _histWJetCharge->fill(jetCharge,weight);
 	      _histWCharge->fill(wCharge,weight);
-	      //_histJetDipolarity->fill(JetProjection.Dipolarity(jets.front(),0.4),weight);
+	      _hist2DJetPullThetaT->fill(tvec.second,tvec.first);
 	    }	      
-	  /*
-	    for(PseudoJets::const_iterator jet2=jet; jet2!=jets.end(); jet2++)
-	    {
-	    _histJet2Mass->fill((*jet+*jet2).m(),weight);
-	    for(PseudoJets::const_iterator jet3=jet2; jet3!=jets.end(); jet3++)
-	    _histJet3Mass->fill((*jet+*jet2+*jet3).m(),weight);
-	    }
-	  */
-	  //}
+
 	}
       else
 	vetoEvent;
@@ -232,10 +228,10 @@ namespace Rivet {
 	scale(H.second,1/sumOfWeights());
       */
       cout<<"Cut summary: "<<endl;
-      cout<<"| Inclusive | "<<nPassing[0]<< " | "<<endl;
-      cout<<"| Found W   | "<<nPassing[1]<< " | "<<endl;
-      cout<<"| >1 Jet    | "<<nPassing[2]<< " | "<<endl;
-      cout<<"| Fiducial  | "<<nPassing[3]<< " | "<<endl;
+      cout<<"| Inclusive | "<<_nPassing[0]<< " | "<<endl;
+      cout<<"| Found W   | "<<_nPassing[1]<< " | "<<endl;
+      cout<<"| >1 Jet    | "<<_nPassing[2]<< " | "<<endl;
+      cout<<"| Fiducial  | "<<_nPassing[3]<< " | "<<endl;
       
       cout<<"Mean Jet Charge: "<<_histWJetCharge->mean()<<" +/- "<<_histWJetCharge->rms()<<endl;
       
@@ -261,6 +257,7 @@ namespace Rivet {
       normalize(_histWJetCharge);
       normalize(_histWCharge);
       normalize(_hist2DJetChargeWPt);
+      normalize(_hist2DJetPullThetaT);
       normalize(_histSubJetMult);
       normalize(_histJetMassFilt);
       normalize(_histJetMassTrim);
@@ -305,6 +302,7 @@ namespace Rivet {
     AIDA::IHistogram1D *_histWCharge;
     AIDA::IHistogram1D *_histSubJetMult;
     AIDA::IHistogram2D *_hist2DJetChargeWPt;
+    AIDA::IHistogram2D *_hist2DJetPullThetaT;
       //N-subjettiness histos	
     AIDA::IHistogram1D *_histJetMassFilt;
     AIDA::IHistogram1D *_histJetMassTrim;	
@@ -314,7 +312,7 @@ namespace Rivet {
     AIDA::IHistogram1D *_histNSubJettiness2Iter;	
     //@}
     // Event count for efficiency study
-    int nPassing[4];
+    int _nPassing[4];
   };
 
 
@@ -324,40 +322,4 @@ namespace Rivet {
 }
 /// Garbage bin
 /*
-  	      for(unsigned int l=(k+1); l!=nSubJets; ++l)
-	      _histSubJet3Mass->fill((subJets.at(j)+subJets.at(k)+subJets.at(l)).m(),weight);
  */
-      /*
-      // was 1/sumOfWeights()
-
-      */
-
-      /*
-      // Jet Kinematics
-      scale( _histJetMult , 1/(_histJetMult->sumAllBinHeights()));
-      scale( _histJetPt , 1/(_histJetPt->sumAllBinHeights()));
-      scale( _histJetE , 1/(_histJetE->sumAllBinHeights()));
-      scale( _histJetEta , 1/(_histJetEta->sumAllBinHeights()));
-      scale( _histJetRapidity , 1/(_histJetRapidity->sumAllBinHeights()));
-      //scale( _histJetPhi , 1/(_histJetPhi->sumAllBinHeights()));
-      scale( _histJetMass , 1/(_histJetMass->sumAllBinHeights()));
-	                                            
-      // Jet Theoreticals Theoreticals 	
-      //scale( _histJet2Mass , 1/(_histJet2Mass->sumAllBinHeights()));
-      //scale( _histJet3Mass , 1/(_histJet3Mass->sumAllBinHeights()));
-	                                            
-      scale( _histSubJet2Mass , 1/(_histSubJet2Mass->sumAllBinHeights()));
-      scale( _histSubJet3Mass , 1/(_histSubJet3Mass->sumAllBinHeights()));
-      scale( _histSubJetDeltaR , 1/(_histSubJetDeltaR->sumAllBinHeights()));
-      scale( _histSubJetMass , 1/(_histSubJetMass->sumAllBinHeights()));
-      scale( _histSubJetSumEt , 1/(_histSubJetSumEt->sumAllBinHeights()));
-	                                            
-      //scale( _histSubJetSkew , 1/(_histSubJetSkew->sumAllBinHeights()));
-      //scale( _histSubJetStddev , 1/(_histSubJetStddev->sumAllBinHeights()));
-      	                                            
-      //scale( _histJetDipolarity , 1/(_histJetDipolarity->sumAllBinHeights()));
-      scale( _histWJetCharge , 1/(_histWJetCharge->sumAllBinHeights()));
-      scale( _histWCharge , 1/(_histWCharge->sumAllBinHeights()));
-      //cout<<"Mean Charge: "<<_histWCharge->mean()<<"\u00B1"<<_histWCharge->rms()<<endl;
-      scale( _histSubJetMult , 1/(_histSubJetMult->sumAllBinHeights()));
-      */

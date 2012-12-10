@@ -6,9 +6,9 @@
 Executable      = /home/dmb60/rivet/Analysis/rivet-jet-charge/CondorScripts/Pythia8.sh
 Requirements    = Machine =!= "atl007.phy.duke.edu"
 Universe        = vanilla
-Error           = /home/dmb60/logs/rivet_pythia8_err.$(Cluster).$(Process)
-Output          = /home/dmb60/logs/rivet_pythia8_out.$(Cluster).$(Process)
-Log             = /home/dmb60/logs/rivet_pythia8_log.$(Cluster).$(Process)
+Error           = /home/dmb60/logs/rivet/Pythia8/err.$(Cluster).$(Process)
+Output          = /home/dmb60/logs/rivet/Pythia8/out.$(Cluster).$(Process)
+Log             = /home/dmb60/logs/rivet/Pythia8/log.$(Cluster).$(Process)
 
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
@@ -17,7 +17,7 @@ get_env = True
 Notification = Never
 
 Arguments = $(Process)
-Queue 20
+Queue 40
 
 
 
