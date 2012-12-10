@@ -4,6 +4,7 @@ JOB_ID=$1
 RIVET_PREFIX=/home/dmb60/rivet
 RIVET_ANALYSIS_DIR=${RIVET_PREFIX}/Analysis/rivet-jet-charge
 OUTDIR=${RIVET_ANALYSIS_DIR}/HighStatsAida/Pythia8
+export LHAPATH=/home/dave/rivet/local/share/lhapdf/PDFsets
 mkdir -p ${OUTDIR}
 source ${RIVET_PREFIX}/rivetenv.sh
 source ${RIVET_PREFIX}/agileenv.sh
