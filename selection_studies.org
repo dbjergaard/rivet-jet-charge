@@ -45,7 +45,7 @@ Cut summary:
 | Fiducial  | 7495 | 
 Mean Jet Charge: -0.0199746 +/- 0.0576004
 Time: 469s
-
+* Pythia8
 W->Muons only; eta < 2.25
 Cut summary: 
 | Inclusive | 25000 | 

@@ -175,7 +175,18 @@ LegendXPos=0.60
 Title= Jet charge ($Q_j Q_W$) vs $W p_\perp$
 XLabel=$e^2$
 YLabel=$p_\perp$ (GeV/c)
-ZLabel=$\int f(x) dx \equiv 1$ 
+ZLabel=$\int f(x,y) dxdy \equiv 1$ 
+LogY=0
+LogX=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullThetaT$
+Title= Jet Pull $\theta_t$ vs |\vec{t}|
+XLabel=$\theta_t$
+YLabel=$|\vec{t}|$
+ZLabel=$\int f(x,y) dxdy \equiv 1$ 
 LogY=0
 LogX=0
 LegendYPos=0.95

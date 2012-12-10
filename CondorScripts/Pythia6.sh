@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 JOB_ID=$1
-RIVET_PREFIX=/home/dmb60/rivet
+RIVET_PREFIX=${HOME}/rivet
 RIVET_ANALYSIS_DIR=${RIVET_PREFIX}/Analysis/rivet-jet-charge
 OUTDIR=${RIVET_ANALYSIS_DIR}/HighStatsAida/Pythia6
 export LHAPATH=${RIVET_PREFIX}/local/share/lhapdf/PDFsets
