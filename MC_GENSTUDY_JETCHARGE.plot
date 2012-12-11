@@ -193,6 +193,15 @@ LegendYPos=0.95
 LegendXPos=0.60
 # END PLOT
 
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullThetaTy$
+Title= y component of Pull vector ($|\vec{t}|$)
+XLabel=sterad^2
+YLabel=$\int f(x) dx \equiv 1$ 
+LogY=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/WCharge$
 Title= Charge of tagged W
 XLabel=e
