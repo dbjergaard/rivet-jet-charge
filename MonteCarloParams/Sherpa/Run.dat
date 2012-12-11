@@ -1,0 +1,34 @@
+(run){
+  EVENTS = 25000
+}(run)
+
+(beam){
+  BEAM_1 = 2212; BEAM_ENERGY_1 = 3500;
+  BEAM_2 = 2212; BEAM_ENERGY_2 = 3500;
+}(beam)
+
+(processes){
+  Process 93 93 -> 13 -14 93{5}
+  Order_EW 2
+  CKKW sqr(30/E_CMS)
+  End process;
+
+  Process 93 93 -> -13 14 93{5}
+  Order_EW 2
+  CKKW sqr(30/E_CMS)
+  End process;
+}(processes)
+
+(selector){
+  Mass -11 12 1.7 E_CMS
+  Mass 11 -12 1.7 E_CMS
+}(selector)
+
+(mi){
+  MI_HANDLER = None  # None or Amisic
+}(mi)
+(analysis){
+  BEGIN_RIVET {
+    --analysis-path=/home/dave/rivet/Analysis/rivet-jet-charge -a MC_GENSTUDY_JETCHARGE
+  } END_RIVET
+}(analysis)

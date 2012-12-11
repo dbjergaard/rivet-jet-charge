@@ -195,7 +195,7 @@ LegendXPos=0.60
 
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullThetaTy$
 Title= y component of Pull vector ($|\vec{t}|$)
-XLabel=sterad^2
+XLabel=$sterad^2$
 YLabel=$\int f(x) dx \equiv 1$ 
 LogY=0
 LegendYPos=0.95
