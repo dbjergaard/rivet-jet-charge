@@ -29,6 +29,6 @@
 }(mi)
 (analysis){
   BEGIN_RIVET {
-    --analysis-path=/home/dave/rivet/Analysis/rivet-jet-charge -a MC_GENSTUDY_JETCHARGE
+     -a MC_GENSTUDY_JETCHARGE
   } END_RIVET
 }(analysis)

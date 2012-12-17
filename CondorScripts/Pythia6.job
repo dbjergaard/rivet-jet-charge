@@ -16,7 +16,12 @@ stream_error = True
 get_env = True
 Notification = Never
 
-Arguments = $(Process)
+# PYTUNE=350, Perugia 2011
+Arguments = $(Process) 350
+Queue 40
+
+# PYTUNE=354 NOcr
+Arguments = $(Process) 354
 Queue 40
 
 
