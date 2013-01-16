@@ -20,8 +20,8 @@
 }(processes)
 
 (selector){
-  Mass -11 12 1.7 E_CMS
-  Mass 11 -12 1.7 E_CMS
+  Mass -13 14 1.7 E_CMS
+  Mass 13 -14 1.7 E_CMS
 }(selector)
 
 (mi){

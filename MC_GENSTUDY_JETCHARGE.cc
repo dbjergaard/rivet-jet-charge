@@ -25,14 +25,10 @@ namespace Rivet {
   /// Generic analysis looking at various distributions of final state particles
   class MC_GENSTUDY_JETCHARGE : public Analysis {
   public:
-
     /// Constructor
     MC_GENSTUDY_JETCHARGE()
       : Analysis("MC_GENSTUDY_JETCHARGE")
     { for(unsigned int i=0; i < 4; i++) _nPassing[i]=0;    }
-
-
-  public:
 
     /// @name Analysis methods
     //@{
@@ -45,12 +41,11 @@ namespace Rivet {
       muonEtaRanges.push_back(make_pair(-2.4,2.4));
       WFinder muWFinder(fs, muonEtaRanges, 25*GeV, MUON, 
 			40*GeV,1000*GeV,25*GeV,0.6,true,false,80.4,true);
-
       // Tag a W in the event, focus on jets that don't come from the W decay.
       addProjection(muWFinder,"muWFinder");
-
       FastJets JetProjection(muWFinder.remainingFinalState(),FastJets::ANTIKT, 0.6); //FastJets::KT,0.7
       addProjection(JetProjection,"Jets");
+
       ///////////////
       // Histograms
       ///////////////
@@ -136,7 +131,7 @@ namespace Rivet {
 
       if (jets.size() > 0) {
 	_nPassing[2]++;
-	unsigned int jetMult=jets.size();
+	const unsigned int jetMult=jets.size();
 	_histograms["JetMult"]->fill(jetMult);
 	/// Rather than loop over all jets, just take the first hard
 	/// one, Make sure entire jet is within fiducial volume
@@ -170,9 +165,9 @@ namespace Rivet {
 	  _histograms["JetEta"]->fill(jets.front().eta(),weight);	
 	  _histograms["JetRapidity"]->fill(jets.front().rapidity(),weight); 
 	  //histograms["JetPhi"]->fill(jets.front().phi(),weight);	
-	  double wCharge=PID::charge(muWFinder.bosons().front().pdgId())+0.0;//dirty cast 
-	  double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
-	  std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
+	  const double wCharge=PID::charge(muWFinder.bosons().front().pdgId())+0.0;//dirty cast 
+	  const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
+	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
 	  //std::cout<<"mag: "<<tvec.first<<"theta: "<<tvec.second<<endl;
 	  _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
 	  _histograms["WJetCharge"]->fill(jetCharge,weight);
@@ -200,7 +195,6 @@ namespace Rivet {
     }
     //@}
   private:
-
     ///@param _histograms Indexed by histogram name for easy management
     ///until Rivet Autobooking takes over, allows any number of
     ///histograms to be added "on the fly" in the init() method.
@@ -208,8 +202,10 @@ namespace Rivet {
     BookedHistos _histograms;
     AIDA::IHistogram2D *_hist2DJetChargeWPt;
     //@}
-    // Event count for efficiency study
+    /// @param _nPassing Event count for efficiency study
+    //@{
     int _nPassing[4];
+    //@}
   };
   // The hook for the plugin system
   DECLARE_RIVET_PLUGIN(MC_GENSTUDY_JETCHARGE);

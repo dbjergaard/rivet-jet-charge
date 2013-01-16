@@ -30,26 +30,8 @@ set LHCGenerator:EventHandler:LuminosityFunction:Energy 7000.0
 ##################################################
 cd /Herwig/MatrixElements/
 
-#
-#  Electroweak boson W/Z processes
-#
-# Drell-Yan Z/gamma
-# insert SimpleQCD:MatrixElements[0] MEqq2gZ2ff
-#
-# Drell-Yan W
-# insert SimpleQCD:MatrixElements[0] MEqq2W2ff
-#
 # W+jet
 insert SimpleQCD:MatrixElements[0] MEWJet
-#
-# Z+jet
-# insert SimpleQCD:MatrixElements[0] MEZJet
-#
-# WW/WZ/ZZ
-# insert SimpleQCD:MatrixElements[0] MEPP2VV
-#
-# Wgamma/Zgamma
-# insert SimpleQCD:MatrixElements[0] MEPP2VGamma
 
 do /Herwig/Particles/W+:SelectDecayModes W+->nu_mu,mu+;
 do /Herwig/Particles/W-:SelectDecayModes W-->nu_mubar,mu-;
@@ -68,6 +50,7 @@ insert DP1Cuts:OneCuts 0 DPKtCut
 create ThePEG::SubProcessHandler DP1
 insert DP1:MatrixElements 0 /Herwig/MatrixElements/MEWJet
 set DP1:PartonExtractor /Herwig/Partons/QCDExtractor
+
 insert MPIHandler:SubProcessHandlers 1 DP1
 insert MPIHandler:Cuts 1 DP1Cuts
 # now set what multiplicities you want. index = 0 means the first
@@ -77,19 +60,6 @@ insert MPIHandler:additionalMultiplicities 0 1
 
 cd /Herwig/Generators
 
-##################################################
-#  Useful analysis handlers for hadron-hadron physics
-##################################################
-# analysis of W/Z events
-# insert LHCGenerator:AnalysisHandlers 0 /Herwig/Analysis/DrellYan
-# analysis of top-antitop events
-# insert LHCGenerator:AnalysisHandlers 0 /Herwig/Analysis/TTbar
-# analysis of gamma+jet events
-# insert LHCGenerator:AnalysisHandlers 0 /Herwig/Analysis/GammaJet
-# analysis of gamma-gamma events
-# insert LHCGenerator:AnalysisHandlers 0 /Herwig/Analysis/GammaGamma
-# analysis of higgs-jet events
-# insert LHCGenerator:AnalysisHandlers 0 /Herwig/Analysis/HiggsJet
 #######################
 # Setup rivet analysis
 #######################
@@ -97,21 +67,10 @@ create ThePEG::RivetAnalysis /Herwig/Analysis/RivetAnalysis RivetAnalysis.so
 insert /Herwig/Generators/LHCGenerator:AnalysisHandlers 0 /Herwig/Analysis/RivetAnalysis
 insert /Herwig/Analysis/RivetAnalysis:Analyses 0 MC_GENSTUDY_JETCHARGE
 
+set /Herwig/Decays/DecayHandler:LifeTimeOption 0
+set /Herwig/Decays/DecayHandler:MaxLifeTime 10*mm
 
 ##################################################
 # Save run for later usage with 'Herwig++ run'
 ##################################################
 saverun LHC LHCGenerator
-
-##################################################
-# uncomment this section for an example batch run
-# of two repeats with different parameters
-#
-# Note that a separate call of 'Herwig run' 
-# is not required in this case
-##################################################
-# set LHCGenerator:NumberOfEvents 10
-# run LHC-full LHCGenerator
-#
-# set LHCGenerator:EventHandler:LuminosityFunction:Energy 900.0
-# run LHC-initial LHCGenerator
