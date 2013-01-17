@@ -1,0 +1,32 @@
+# file name:  eg.job
+# Condor submit description file for evgen
+# asetup needs getenv
+# initialdir doesn't work
+
+Executable      = /home/dmb60/rivet/Analysis/rivet-jet-charge/CondorScripts/Pythia8.sh
+Requirements    = Machine =!= "atl007.phy.duke.edu"
+Universe        = vanilla
+Error           = /home/dmb60/logs/rivet/Pythia8/err.$(Cluster).$(Process)
+Output          = /home/dmb60/logs/rivet/Pythia8/out.$(Cluster).$(Process)
+Log             = /home/dmb60/logs/rivet/Pythia8/log.$(Cluster).$(Process)
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+stream_error = True
+get_env = True
+Notification = Never
+
+Arguments = 2
+Queue 1
+Arguments = 16
+Queue 1
+Arguments = 21
+Queue 1
+Arguments = 23
+Queue 1
+Arguments = 34
+Queue 1
+
+
+
+

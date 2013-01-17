@@ -1,0 +1,19 @@
+Executable      = /home/dmb60/rivet/Analysis/rivet-jet-charge/CondorScripts/Sherpa.sh
+Requirements    = Machine =!= "atl007.phy.duke.edu"
+Universe        = vanilla
+Error           = /home/dmb60/logs/rivet/Sherpa/err.$(Cluster).$(Process)
+Output          = /home/dmb60/logs/rivet/Sherpa/out.$(Cluster).$(Process)
+Log             = /home/dmb60/logs/rivet/Sherpa/log.$(Cluster).$(Process)
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+stream_error = True
+get_env = True
+Notification = Never
+
+Arguments = 6
+Queue 1
+Arguments = 22
+Queue 1
+Arguments = 31
+Queue 1
