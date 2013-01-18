@@ -11,9 +11,11 @@ stream_error = True
 get_env = True
 Notification = Never
 
-Arguments = 6
+Arguments = 5
 Queue 1
-Arguments = 22
+Arguments = 7
 Queue 1
-Arguments = 31
+Arguments = 14
+Queue 1
+Arguments = 28
 Queue 1
