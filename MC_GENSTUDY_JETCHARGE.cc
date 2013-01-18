@@ -172,8 +172,8 @@ namespace Rivet {
 	  _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
 	  _histograms["WJetCharge"]->fill(jetCharge,weight);
 	  _histograms["WCharge"]->fill(wCharge,weight);
-	  _histograms["JetPullTheta"]->fill(tvec.first,weight);
-	  _histograms["JetPullMag"]->fill(tvec.second,weight);
+	  _histograms["JetPullMag"]->fill(tvec.first,weight);
+	  _histograms["JetPullTheta"]->fill(tvec.second,weight);
 	}	      
       }
       else {

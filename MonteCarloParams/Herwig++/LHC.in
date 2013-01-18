@@ -16,13 +16,24 @@ set LHCGenerator:MaxErrors 10000
 # LHC physics parameters (override defaults here) 
 ##################################################
 
-# Intrinsic pT tune extrapolated to LHC energy
-set /Herwig/Shower/Evolver:IntrinsicPtGaussian 2.2*GeV
-
-########################
-## sqrt(s) = 7000 GeV ##
-########################
 set LHCGenerator:EventHandler:LuminosityFunction:Energy 7000.0
+# Intrinsic pT tune extrapolated to LHC energy
+set /Herwig/Shower/Evolver:IntrinsicPtGaussian 2.2*GeV                         
+# This is basically the EE tune (but check with D&A)
+## Min multiple scattering pT
+set /Herwig/UnderlyingEvent/KtCut:MinKT 4.020000*GeV
+## This should always be 2*MinKT
+set /Herwig/UnderlyingEvent/UECuts:MHatMin 8.040000*GeV
+## The inverse hadron radius
+set /Herwig/UnderlyingEvent/MPIHandler:InvRadius 1.100000*GeV2
+## Colour disruption probability
+set /Herwig/Partons/RemnantDecayer:colourDisrupt 0.150000
+## Enable colour reconnection
+set /Herwig/Hadronization/ColourReconnector:ColourReconnection Yes
+## Colour reconnection probability
+set /Herwig/Hadronization/ColourReconnector:ReconnectionProbability 0.550000
+set /Herwig/UnderlyingEvent/MPIHandler:twoComp Yes
+set /Herwig/UnderlyingEvent/MPIHandler:DLmode 3
 
 ##################################################
 # Matrix Elements for hadron-hadron collisions 
@@ -41,22 +52,6 @@ cd /Herwig/UnderlyingEvent/
 create ThePEG::SimpleKTCut DPKtCut SimpleKTCut.so
 set DPKtCut:MinKT 30
 set DPKtCut:MaxEta 2.25
-# create the cuts object for DP1
-create ThePEG::Cuts DP1Cuts
-# This should always be 2*MinKT!!
-set DP1Cuts:MHatMin 60
-insert DP1Cuts:OneCuts 0 DPKtCut
-
-create ThePEG::SubProcessHandler DP1
-insert DP1:MatrixElements 0 /Herwig/MatrixElements/MEWJet
-set DP1:PartonExtractor /Herwig/Partons/QCDExtractor
-
-insert MPIHandler:SubProcessHandlers 1 DP1
-insert MPIHandler:Cuts 1 DP1Cuts
-# now set what multiplicities you want. index = 0 means the first
-# ADDITIONAL hard process
-# this is SubProcessHandler 1 with multiplicity 1
-insert MPIHandler:additionalMultiplicities 0 1
 
 cd /Herwig/Generators
 

@@ -182,20 +182,18 @@ LegendYPos=0.95
 LegendXPos=0.60
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullThetaT$
-Title= Jet Pull $\theta_t$ vs |\vec{t}|
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullTheta$
+Title= Jet Pull $\theta_t$ 
 XLabel=$\theta_t$
-YLabel=$|\vec{t}|$
-ZLabel=$\int f(x,y) dxdy \equiv 1$ 
+YLabel=$\int f(x) dx \equiv 1$ 
 LogY=0
-LogX=0
 LegendYPos=0.95
 LegendXPos=0.60
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullThetaTy$
-Title= y component of Pull vector ($|\vec{t}|$)
-XLabel=$sterad^2$
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetPullMag$
+Title= Jet Pull Magnitude $|t|$ 
+XLabel=$|t|$
 YLabel=$\int f(x) dx \equiv 1$ 
 LogY=0
 LegendYPos=0.95
