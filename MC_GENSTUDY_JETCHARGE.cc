@@ -173,7 +173,9 @@ namespace Rivet {
 	  _histograms["WJetCharge"]->fill(jetCharge,weight);
 	  _histograms["WCharge"]->fill(wCharge,weight);
 	  _histograms["JetPullMag"]->fill(tvec.first,weight);
-	  _histograms["JetPullTheta"]->fill(tvec.second,weight);
+	  if(tvec.first > 0) {
+	    _histograms["JetPullTheta"]->fill(tvec.second,weight);
+	  }
 	}	      
       }
       else {
