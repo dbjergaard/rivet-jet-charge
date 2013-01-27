@@ -17,21 +17,19 @@ get_env = True
 Notification = Never
 
 # PYTUNE=350, Perugia 2011
-Arguments = 7 350
-Queue 1
-Arguments = 23 350
-Queue 1
-Arguments = 24 350
-Queue 1
-Arguments = 32 350
-Queue 1
-
 # PYTUNE=354 NOcr
-Arguments = 45 354
+
+Arguments = 3 350  
 Queue 1
-Arguments = 71 354
+Arguments = 30 350 
 Queue 1
-
-
-
-
+Arguments = 41 354 
+Queue 1
+Arguments = 43 354 
+Queue 1
+Arguments = 50 354 
+Queue 1
+Arguments = 56 354 
+Queue 1
+Arguments = 59 354 
+Queue 1

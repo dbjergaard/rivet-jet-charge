@@ -25,3 +25,11 @@
 *.maf
 *.mtc
 *.mtc0
+*.aida
+*.bak
+xmldoc/
+fort.*
+*.dat
+*.png
+*.txt
+*.data
