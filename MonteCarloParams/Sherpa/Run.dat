@@ -20,8 +20,8 @@
 }(processes)
 
 (selector){
-  Mass -13 14 1.7 E_CMS
-  Mass 13 -14 1.7 E_CMS
+  PT 93 30 E_CMS
+  PseudoRapidity 93 -2.25 2.25
 }(selector)
 
 (mi){

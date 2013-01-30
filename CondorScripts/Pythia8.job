@@ -16,7 +16,12 @@ stream_error = True
 get_env = True
 Notification = Never
 
-Arguments = $(Process)
+# CTEQ6L1
+Arguments = $(Process) 8
+Queue 40
+
+# MSTW 2008 LO==5
+Arguments = $(Process) 5
 Queue 40
 
 

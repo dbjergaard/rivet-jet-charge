@@ -3,6 +3,10 @@
 #include <map>
 #include <algorithm>
 
+//Generator Interfaces
+#include "HepMC/GenParticle.h"
+#include "HepMC/GenEvent.h"
+
 //Rivet framework
 #include "Rivet/Analysis.hh"
 #include "Rivet/RivetAIDA.hh"
@@ -67,11 +71,20 @@ namespace Rivet {
       _histograms["SubJetSumEt"]	= bookHistogram1D("SubJetSumEt"		, 30, 0, 175);
 
       //Jet Charge Histos
-      _histograms["WJetCharge"]		= bookHistogram1D("WJetCharge"		, 50, -0.3, 0.3);
       _histograms["WCharge"]		= bookHistogram1D("WCharge"		, 3, -1.5, 1.5);
+      _histograms["WJetCharge"]		= bookHistogram1D("WJetCharge"		, 50, -0.3, 0.3);
+      _histograms["QuarkJetCharge"]      = bookHistogram1D("QuarkJetCharge"	, 50, -0.3, 0.3);      
+      _histograms["GluonJetCharge"]      = bookHistogram1D("GluonJetCharge"	, 50, -0.3, 0.3);      
+
+      _histograms["QuarkJetPt"]         = bookHistogram1D("QuarkJetPt"          ,50,33,300);
+      _histograms["GluonJetPt"]         = bookHistogram1D("GluonJetPt"          ,50,33,300);
+      
       _histograms["JetPullTheta"]       = bookHistogram1D("JetPullTheta"	,50,-PI,PI);
       _histograms["JetPullMag"]         = bookHistogram1D("JetPullMag"          ,50,0,0.04);
       _hist2DJetChargeWPt		= bookHistogram2D("JetChargeVsWPt"	,50,-0.3,0.3,50,24,300);
+      _histograms["TruthDeltaR"]        = bookHistogram1D("TruthDeltaR"         ,50,0,0.7);
+      _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,7,-0.5,6.5);
+
 
       //N-subjettiness histos	
       _histograms["JetMassFilt"]	= bookHistogram1D("JetMassFilt"		, 60, 0, 50);
@@ -145,36 +158,54 @@ namespace Rivet {
 	    _histograms["JetMassPrune"]->fill(JetProjection.Pruner(jet, FastJets::CAM, 0.4, 0.1).m(), weight);
 	    PseudoJets constituents = jet.constituents();
 	    if (constituents.size() > 10) {
-	      //todo slurp into one function call
-		      
 	      PseudoJets axes(JetProjection.GetAxes(2, constituents, FastJets::CAM, 0.5));
-	      double tau = JetProjection.TauValue(2, 1, constituents, axes);
-	      _histograms["NSubJettiness"]->fill(tau, weight);
+	      _histograms["NSubJettiness"]->fill(JetProjection.TauValue(2, 1, constituents, axes), weight);
 	      JetProjection.UpdateAxes(2, constituents, axes);
-	      double tau1 = JetProjection.TauValue(2, 1, constituents, axes);
+	      _histograms["NSubJettiness1Iter"]->fill(JetProjection.TauValue(2, 1, constituents, axes), weight);
 	      JetProjection.UpdateAxes(2, constituents, axes);
-	      double tau2 = JetProjection.TauValue(2, 1, constituents, axes);
-	      _histograms["NSubJettiness1Iter"]->fill(tau1, weight);
-	      _histograms["NSubJettiness2Iter"]->fill(tau2, weight);
+	      _histograms["NSubJettiness2Iter"]->fill(JetProjection.TauValue(2, 1, constituents, axes), weight);
 	    }
 	  }
 	  _nPassing[3]++;
+	  const double wCharge=static_cast<double>(PID::charge(muWFinder.bosons().front().pdgId()));
+	  const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
+	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
 	  _histograms["JetMass"]->fill(jets.front().m(),weight);
 	  _histograms["JetPt"]->fill(jets.front().pt(),weight);	
 	  _histograms["JetE"]->fill(jets.front().E(),weight);
 	  _histograms["JetEta"]->fill(jets.front().eta(),weight);	
 	  _histograms["JetRapidity"]->fill(jets.front().rapidity(),weight); 
 	  //histograms["JetPhi"]->fill(jets.front().phi(),weight);	
-	  const double wCharge=PID::charge(muWFinder.bosons().front().pdgId())+0.0;//dirty cast 
-	  const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
-	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
-	  //std::cout<<"mag: "<<tvec.first<<"theta: "<<tvec.second<<endl;
 	  _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
 	  _histograms["WJetCharge"]->fill(jetCharge,weight);
 	  _histograms["WCharge"]->fill(wCharge,weight);
 	  _histograms["JetPullMag"]->fill(tvec.first,weight);
 	  if(tvec.first > 0) {
 	    _histograms["JetPullTheta"]->fill(tvec.second,weight);
+	  }
+	  HepMC::GenParticle* truthParton=particles(event.genEvent()).front();
+	  double truthDelR(0);
+	  foreach (HepMC::GenParticle* const p, particles(event.genEvent())) {
+	    //This may be slow, but its the path of minimal obfuscation 
+	    const double delR = jets.front().delta_R(fastjet::PseudoJet(p->momentum().px(),
+							   p->momentum().py(),
+							   p->momentum().pz(),
+							   p->momentum().e()));
+	    if(delR < 0.6 && truthParton->momentum().perp() < p->momentum().perp()) {
+	      truthDelR = delR;
+	      truthParton = p;
+	    }
+	  }
+	  _histograms["TruthDeltaR"]->fill(truthDelR,weight);
+	  unsigned int pdgId = abs(truthParton->pdg_id());
+	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 : pdgId, weight);
+	  if(pdgId < 7) {
+	    _histograms["QuarkJetCharge"]->fill(jetCharge,weight);
+	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
+	  }
+	  else {
+	    _histograms["GluonJetCharge"]->fill(jetCharge,weight);
+	    _histograms["GluonJetPt"]->fill(jets.front().pt(),weight);
 	  }
 	}	      
       }
