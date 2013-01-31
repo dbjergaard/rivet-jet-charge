@@ -186,6 +186,7 @@ namespace Rivet {
 	  HepMC::GenParticle* truthParton=particles(event.genEvent()).front();
 	  double truthDelR(0);
 	  foreach (HepMC::GenParticle* const p, particles(event.genEvent())) {
+	    if((p->pdg_id() != 21) and (abs(p->pdgId()) > 6)) continue; 
 	    //This may be slow, but its the path of minimal obfuscation 
 	    const double delR = jets.front().delta_R(fastjet::PseudoJet(p->momentum().px(),
 							   p->momentum().py(),
