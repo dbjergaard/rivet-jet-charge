@@ -31,14 +31,15 @@ a-list `stats'"
       (setq stats (append-stat ">1 Jet    | " 'greater-one-jet stats))
       (setq stats (append-stat "Fiducial  | " 'fiducial stats))
       (setq stats (append-charge stats))
+      ;(kill-buffer (current-buffer))
       (switch-to-buffer current-buf) stats))
 (defun get-files (dir suffix &optional split-func split-func-args)
   "Return a list of files from `dir' containing regexp `suffix'
   and remove those which do not pass `split-func'"
   (let ((files (directory-files dir t suffix)))
     (when (functionp split-func) 
-	(dolist (fname files)
-	  (unless (funcall split-func fname split-func-args) (delete fname files))))
+      (dolist (fname files)
+	(unless (funcall split-func fname split-func-args) (delete fname files))))
     files))
 (defun summarize-condor-results (dir suffix &optional split-func split-func-args)
  "Iterate over `dir' containing output logs and summarize the
@@ -71,6 +72,13 @@ log files to process"
 	  (cons 'found-w found-w) 
 	  (cons 'greater-one-jet greater-one-jet) 
 	  (cons 'fiducial fiducial))))
+(defun find-tune-text (fname tune-string)
+  "Return nil if `tune-string' doesn't exist in `fname'"
+  (let ((buf (current-buffer))
+	res)  
+    (switch-to-buffer (find-file-read-only fname))
+    (setq res (search-forward tune-string nil t nil))
+    (switch-to-buffer buf) res))
 
 (defun split-by-n (fname n)
   "Take a string of the form \"name.Cluster.Process\" where Cluster
@@ -91,39 +99,17 @@ log files to process"
 		     (+ (cdr (assoc 'inclusive data)) 0.0))))))
 
 (print-condor-summary "/ssh:dmb60@atl008:~/rivet/Analysis/rivet-jet-charge/MonteCarloParams/Herwig++" "\\.log" "Herwig++")
-Generator: Herwig++
-Q=-0.019±0.053 
-| inclusive       | 875000 |
-| found-w         | 155242 |
-| greater-one-jet | 60686  |
-| fiducial        | 47805  |
-| Efficiency      | 0.055  |
 
 (print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Sherpa" "^out.*" "Sherpa")
-Generator: Sherpa
-Q=-0.020±0.055 
-| inclusive       | 825000 |
-| found-w         | 418870 |
-| greater-one-jet | 31832  |
-| fiducial        | 28284  |
-| Efficiency      | 0.034  |
 
-(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, MSTW LO**" #'split-by-n 40)
-Generator: Pythia 6, Perugia 2011, MSTW LO**
-Q=-0.020±0.058 
-| inclusive       | 700000 |
-| found-w         | 411405 |
-| greater-one-jet | 303856 |
-| fiducial        | 254102 |
-| Efficiency      | 0.363  |
-(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, CTEQ6L1" (lambda (fname n)
-													     (not (split-by-n fname n))) 40)
-Generator: Pythia 6, Perugia 2011, CTEQ6L1
-Q=-0.020±0.058 
-| inclusive       | 1000000 |
-| found-w         | 583836 |
-| greater-one-jet | 430070 |
-| fiducial        | 355864 |
-| Efficiency      | 0.356  |
+(print-condor-summary
+ "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, MSTW LO**"
+ (lambda (fname x)
+   (find-tune-text fname "355")))
 
-(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia8" "^out.*" "Pythia 8")
+(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, CTEQ6L1" (lambda (fname x)
+   (find-tune-text fname "356")))
+
+(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia8" "^out.*" "Pythia 8" (lambda (fname)
+										     (find-tune-text fname "MSTW2008lo68cl")))
+
