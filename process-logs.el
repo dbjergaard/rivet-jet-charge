@@ -55,7 +55,7 @@ log files to process"
        (cur-buf (current-buffer))) 
     (save-excursion  (dolist (stat-list (mapcar (lambda (file)
 						  (when (file-readable-p file) 
-						    (extract-log-data (find-file-read-only file)))) 
+						    (extract-log-data (find-file file)))) 
 						(get-files dir suffix split-func split-func-args)))
 		       (unless (null stat-list) 
 			 (incf n)
@@ -76,7 +76,7 @@ log files to process"
   "Return nil if `tune-string' doesn't exist in `fname'"
   (let ((buf (current-buffer))
 	res)  
-    (switch-to-buffer (find-file-read-only fname))
+    (switch-to-buffer (find-file fname))
     (setq res (search-forward tune-string nil t nil))
     (switch-to-buffer buf) res))
 
@@ -98,10 +98,17 @@ log files to process"
 		  (/ (cdr (assoc 'fiducial data)) 
 		     (+ (cdr (assoc 'inclusive data)) 0.0))))))
 
+(defun clean-buffer-list-regexp (regexp)
+"Remove all buffers matching `regexp' without prompting."
+(mapcar (lambda (buf)
+	  (interactive)
+	  (let ((buffer-modified-p nil))
+	    (when (string-match regexp (buffer-name buf))
+	      (kill-buffer (current-buffer))))) (buffer-list)))
+
 (print-condor-summary "/ssh:dmb60@atl008:~/rivet/Analysis/rivet-jet-charge/MonteCarloParams/Herwig++" "\\.log" "Herwig++")
 
 (print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Sherpa" "^out.*" "Sherpa")
-
 (print-condor-summary
  "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, MSTW LO**"
  (lambda (fname x)

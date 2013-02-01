@@ -76,6 +76,8 @@ namespace Rivet {
       _histograms["QuarkJetCharge"]      = bookHistogram1D("QuarkJetCharge"	, 50, -0.3, 0.3);      
       _histograms["GluonJetCharge"]      = bookHistogram1D("GluonJetCharge"	, 50, -0.3, 0.3);      
 
+      _histograms["ChargeSignPurity"]   = bookHistogram1D("ChargeSignPurity"    ,50,33,300);
+
       _histograms["QuarkJetPt"]         = bookHistogram1D("QuarkJetPt"          ,50,33,300);
       _histograms["GluonJetPt"]         = bookHistogram1D("GluonJetPt"          ,50,33,300);
       
@@ -186,7 +188,7 @@ namespace Rivet {
 	  HepMC::GenParticle* truthParton=particles(event.genEvent()).front();
 	  double truthDelR(0);
 	  foreach (HepMC::GenParticle* const p, particles(event.genEvent())) {
-	    if((p->pdg_id() != 21) and (abs(p->pdgId()) > 6)) continue; 
+	    if((p->pdg_id() != 21) and (abs(p->pdg_id()) > 6)) continue; 
 	    //This may be slow, but its the path of minimal obfuscation 
 	    const double delR = jets.front().delta_R(fastjet::PseudoJet(p->momentum().px(),
 							   p->momentum().py(),
@@ -198,13 +200,28 @@ namespace Rivet {
 	    }
 	  }
 	  _histograms["TruthDeltaR"]->fill(truthDelR,weight);
+	  foreach (HepMC::GenParticle* const p, particles(event.genEvent())) {
+	    if((p->pdg_id() != 21) and (abs(p->pdg_id()) > 6)) continue; 
+	    //This may be slow, but its the path of minimal obfuscation 
+	    const double delR = jets.front().delta_R(fastjet::PseudoJet(p->momentum().px(),
+							   p->momentum().py(),
+							   p->momentum().pz(),
+							   p->momentum().e()));
+	    if(delR < 0.4 && truthParton->momentum().perp() < p->momentum().perp()) {
+	      truthDelR = delR;
+	      truthParton = p;
+	    }
+	  }
 	  unsigned int pdgId = abs(truthParton->pdg_id());
 	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 : pdgId, weight);
 	  if(pdgId < 7) {
 	    _histograms["QuarkJetCharge"]->fill(jetCharge,weight);
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
+	    if(wCharge*PID::charge(truthParton->pdg_id()) > 0.0) {
+	      _histograms["ChargeSignPurity"]->fill(jets.front().pt(),weight);
+	    }
 	  }
-	  else {
+	  else if(pdgId  == 21){
 	    _histograms["GluonJetCharge"]->fill(jetCharge,weight);
 	    _histograms["GluonJetPt"]->fill(jets.front().pt(),weight);
 	  }
@@ -223,9 +240,11 @@ namespace Rivet {
       cout<<"| Fiducial  | "<<_nPassing[3]<< " | "<<endl;
       cout<<"Mean Jet Charge: "<<_histograms["WJetCharge"]->mean()<<" +/- "<<_histograms["WJetCharge"]->rms()<<endl;
 
-      foreach(BookedHistos::value_type H,_histograms)
+      foreach(BookedHistos::value_type H,_histograms){
 	normalize(H.second);
+      }
       normalize(_hist2DJetChargeWPt);
+      
     }
     //@}
   private:
