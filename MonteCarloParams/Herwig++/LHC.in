@@ -50,8 +50,9 @@ do /Herwig/Particles/W-:SelectDecayModes W-->nu_mubar,mu-;
 # Generator level cuts
 cd /Herwig/UnderlyingEvent/
 create ThePEG::SimpleKTCut DPKtCut SimpleKTCut.so
-set DPKtCut:MinKT 30
-set DPKtCut:MaxEta 2.25
+set /Herwig/Cuts/JetKtCut:MinKT 30
+set /Herwig/Cuts/JetKtCut:MaxEta 2.25
+set /Herwig/Cuts/JetKtCut:MinEta -2.25
 
 cd /Herwig/Generators
 

@@ -8,12 +8,12 @@
 }(beam)
 
 (processes){
-  Process 93 93 -> 13 -14 93{3}
+  Process 93 93 -> 13 -14 93{4}
   Order_EW 2
   CKKW sqr(30/E_CMS)
   End process;
 
-  Process 93 93 -> -13 14 93{3}
+  Process 93 93 -> -13 14 93{4}
   Order_EW 2
   CKKW sqr(30/E_CMS)
   End process;
