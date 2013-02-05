@@ -33,3 +33,7 @@ fort.*
 *.png
 *.txt
 *.data
+*.root
+MonteCarloParams/
+doc/
+plots/

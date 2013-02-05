@@ -8,20 +8,20 @@
 }(beam)
 
 (processes){
-  Process 93 93 -> 13 -14 93{3}
+  Process 93 93 -> 13 -14 93{4}
   Order_EW 2
   CKKW sqr(30/E_CMS)
   End process;
 
-  Process 93 93 -> -13 14 93{3}
+  Process 93 93 -> -13 14 93{4}
   Order_EW 2
   CKKW sqr(30/E_CMS)
   End process;
 }(processes)
 
 (selector){
-  Mass -13 14 1.7 E_CMS
-  Mass 13 -14 1.7 E_CMS
+  PT 93 30 E_CMS
+  PseudoRapidity 93 -2.25 2.25
 }(selector)
 
 (mi){

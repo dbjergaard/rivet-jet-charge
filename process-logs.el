@@ -31,9 +31,17 @@ a-list `stats'"
       (setq stats (append-stat ">1 Jet    | " 'greater-one-jet stats))
       (setq stats (append-stat "Fiducial  | " 'fiducial stats))
       (setq stats (append-charge stats))
+      ;(kill-buffer (current-buffer))
       (switch-to-buffer current-buf) stats))
-
-(defun summarize-condor-results (dir suffix)
+(defun get-files (dir suffix &optional split-func split-func-args)
+  "Return a list of files from `dir' containing regexp `suffix'
+  and remove those which do not pass `split-func'"
+  (let ((files (directory-files dir t suffix)))
+    (when (functionp split-func) 
+      (dolist (fname files)
+	(unless (funcall split-func fname split-func-args) (delete fname files))))
+    files))
+(defun summarize-condor-results (dir suffix &optional split-func split-func-args)
  "Iterate over `dir' containing output logs and summarize the
 total result of a condor job where `suffix' is a regexp matching
 log files to process"
@@ -47,8 +55,8 @@ log files to process"
        (cur-buf (current-buffer))) 
     (save-excursion  (dolist (stat-list (mapcar (lambda (file)
 						  (when (file-readable-p file) 
-						    (extract-log-data (find-file-read-only file)))) 
-						(directory-files dir t suffix)))
+						    (extract-log-data (find-file file)))) 
+						(get-files dir suffix split-func split-func-args)))
 		       (unless (null stat-list) 
 			 (incf n)
 			 (setq jet-charge (+ jet-charge (cadr (assoc 'jet-charge stat-list))))
@@ -64,10 +72,23 @@ log files to process"
 	  (cons 'found-w found-w) 
 	  (cons 'greater-one-jet greater-one-jet) 
 	  (cons 'fiducial fiducial))))
+(defun find-tune-text (fname tune-string)
+  "Return nil if `tune-string' doesn't exist in `fname'"
+  (let ((buf (current-buffer))
+	res)  
+    (switch-to-buffer (find-file fname))
+    (setq res (search-forward tune-string nil t nil))
+    (switch-to-buffer buf) res))
 
-(defun print-condor-summary (dir suffix &optional gen-name tune)
-(let ((data (summarize-condor-results dir suffix)))
-  (when gen-name (insert (format "Generator: %s" gen-name)))
+(defun split-by-n (fname n)
+  "Take a string of the form \"name.Cluster.Process\" where Cluster
+  and Process are numbers. Return fname if Process < n, nil else"
+  (if (< (string-to-number (car (last (split-string fname "\\.")))) n)
+      fname nil))
+
+(defun print-condor-summary (dir suffix &optional gen-name tune split-func split-func-args)
+(let ((data (summarize-condor-results dir suffix split-func split-func-args)))
+  (when gen-name (insert (format "\nGenerator: %s" gen-name)))
   (if tune (insert (format ", %s\n" tune))
     (insert "\n"))
   (insert (format "Q=%.3f±%.3f \n" (cadar data) (cddar data)))
@@ -77,4 +98,25 @@ log files to process"
 		  (/ (cdr (assoc 'fiducial data)) 
 		     (+ (cdr (assoc 'inclusive data)) 0.0))))))
 
+(defun clean-buffer-list-regexp (regexp)
+"Remove all buffers matching `regexp' without prompting."
+(mapcar (lambda (buf)
+	  (interactive)
+	  (let ((buffer-modified-p nil))
+	    (when (string-match regexp (buffer-name buf))
+	      (kill-buffer (current-buffer))))) (buffer-list)))
+
 (print-condor-summary "/ssh:dmb60@atl008:~/rivet/Analysis/rivet-jet-charge/MonteCarloParams/Herwig++" "\\.log" "Herwig++")
+
+(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Sherpa" "^out.*" "Sherpa")
+(print-condor-summary
+ "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, MSTW LO**"
+ (lambda (fname x)
+   (find-tune-text fname "355")))
+
+(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, CTEQ6L1" (lambda (fname x)
+   (find-tune-text fname "356")))
+
+(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia8" "^out.*" "Pythia 8" (lambda (fname)
+										     (find-tune-text fname "MSTW2008lo68cl")))
+

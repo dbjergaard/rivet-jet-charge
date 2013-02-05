@@ -8,6 +8,26 @@ LegendYPos=0.95
 LegendXPos=0.60
 # END PLOT
 
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/GluonJetPt$
+Title=Transverse momentum of all Truth-Gluon Jets
+XLabel=$p_T$ [GeV]
+YLabel=$\int f(x) dx \equiv 1$
+LogY=0
+FullRange=1
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/QuarkJetPt$
+Title=Transverse momentum of all Truth-Quark Jets
+XLabel=$p_T$ [GeV]
+YLabel=$\int f(x) dx \equiv 1$
+LogY=0
+FullRange=1
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/JetE$
 Title=Energy of all Jets
 XLabel=$E$ [GeV]
@@ -126,6 +146,15 @@ LegendYPos=0.95
 LegendXPos=0.60
 # END PLOT
 
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/TruthDeltaR$
+Title=$\Delta R$ of truth parton to jet
+XLabel=sterad
+YLabel=$\int f(x) dx \equiv 1$ 
+LogY=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/SubJetMass$
 Title= Mass of sub-jets
 XLabel=$GeV/c^2$
@@ -164,6 +193,25 @@ LegendXPos=0.60
 
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/WJetCharge$
 Title= Jet charge $\times$ W charge  ($Q_j Q_W$)
+Stack=.*QuarkJetCharge .*GluonJetCharge
+XLabel=$e^2$
+YLabel=$\int f(x) dx \equiv 1$ 
+LogY=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/GluonJetCharge$
+Title= Truth-Quark Jet charge $\times$ W charge  ($Q_j Q_W$)
+XLabel=$e^2$
+YLabel=$\int f(x) dx \equiv 1$ 
+LogY=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/QuarkJetCharge$
+Title= Truth-Gluon Jet charge $\times$ W charge  ($Q_j Q_W$)
 XLabel=$e^2$
 YLabel=$\int f(x) dx \equiv 1$ 
 LogY=0
@@ -203,6 +251,15 @@ LegendXPos=0.60
 # BEGIN PLOT /MC_GENSTUDY_JETCHARGE/WCharge$
 Title= Charge of tagged W
 XLabel=e
+YLabel=$\int f(x) dx \equiv 1$ 
+LogY=0
+LegendYPos=0.95
+LegendXPos=0.60
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_JETCHARGE/TruthPdgID$
+Title= PdgID of truth quark
+XLabel=n
 YLabel=$\int f(x) dx \equiv 1$ 
 LogY=0
 LegendYPos=0.95
