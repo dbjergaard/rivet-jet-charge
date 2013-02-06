@@ -13,9 +13,6 @@ Next:numberShowProcess = 1 ! print process record n times
 Next:numberShowEvent = 1 ! print event record n times
 Stat:showPartonLevel = on ! additional statistics on MPI
 
-! Setup PDFs (8==CTEQ6L1, 5==MSTW 2008 LO, 2==Default)
-PDF:pSet = 2
-
 ! 3) Beam parameter settings. Values below agree with default ones.
 Beams:idA = 2212 ! first beam, p = 2212, pbar = -2212
 Beams:idB = 2212 ! second beam, p = 2212, pbar = -2212
@@ -31,8 +28,11 @@ WeakBosonAndParton:qg2Wq = on
 ! 5) Other settings. Can be expanded as desired.
 ! Note: may overwrite some of the values above, so watch out.
 Tune:pp = 10 ! use Tune 4C
-ParticleDecays:limitTau0 = On
-ParticleDecays:tau0Max = 10.0
+! ParticleDecays:limitTau0 = On
+! ParticleDecays:tau0Max = 10.0
+
+! Setup PDFs (8==CTEQ6L1, 5==MSTW 2008 LO, 2==Default)
+PDF:pSet = 2
 
 Random:setSeed = on
 Random:seed = 1234
