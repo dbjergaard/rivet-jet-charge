@@ -62,7 +62,6 @@ for histo in canonHistos:
         leg.AddEntry(h,gen[1],"f")
     hs.Draw('nostack')
     leg.Draw()
-    
     c.SetLogy(histo[2])
     c.Print(histo[0]+'.png')
 # Stack Quark and Gluon charge to show relative fractions
