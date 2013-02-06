@@ -1,0 +1,125 @@
+#+TITLE:     Jet Charge in W+Jets events 
+#+AUTHOR:    Maximilian Swiatlowski, Benjamin Nachman, _David Bjergaard_
+#+EMAIL:     david.b@duke.edu
+#+DATE:      Wednesday, February 06th, 2013
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+#+startup: oddeven
+
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger]
+#+latex_header: \mode<beamer>{\usetheme{Madrid}}
+#+BEAMER_FRAME_LEVEL: 2
+
+#+COLUMNS: %20ITEM %13BEAMER_env(Env) %6BEAMER_envargs(Args) %4BEAMER_col(Col) %7BEAMER_extra(Extra)
+
+* Introduction
+\unitlength = 1mm
+** Jet Substructure
+   - Boost 2012 is looking into many substructure observables, I'm
+     looking into jet charge and jet pull. 
+   - Jet Charge is defined as
+     $$
+     Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
+     $$
+     Put in words, its the sum of the charge of the constituent particles
+     weighted by the particle's transverse momentum.
+** Jet Substructure (cont)
+   - Pull is defined as
+     $$
+     \vec{t} = \frac{1}{(P_T^{jet})}\sum_{j\in jet}|r_j|\vec{r}_j p_{Tj}
+     $$
+   - $\vec{r}_j\equiv \vec{r}_J - \vec{c}_j$
+     - c_j: location of cluster in jet in (y,\phi)
+     - r_J: location of jet in (y,\phi)
+   - Here, there are two parametrizations of $\vec{t}$
+     - Polar, $|\vec{t}|,\theta_t$
+     - \theta_t = \pm \pi \rightarrow left-moving beam
+     - \theta_t = 0 \rightarrow right-moving beam
+     - Rapidity-Phi plane $(t_y,t_{\phi})$
+** Analysis Cuts
+   - Jets are clustered using $\bar{k_T} 0.6$
+   - Selections on the Muon:
+   - |\eta|<2.4
+     - p_T > 25 GeV/c
+     - \Delta R >0.6 (Minimum delta R between muon and a jet)
+   - Selections on the W
+     - 40 GeV/c^2 < m_T < 1000 GeV/c^2
+     - Targeted mass: 80.4 GeV/c^2
+   - Selections on the highest $p_T$ Jet
+     - |\eta|< 1.9 (MaxEta-JetConeSize)
+* Generators/PDFs
+*** Analysis :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.4
+    :END:
+ - I've investigated Jet Charge from W+Jets across a suite of
+   generators, tunes, and PDFs
+   - Sherpa 1.4.2
+   - Herwig++ 2.6.1a
+   - Pythia 6 4.26
+     - Perugia 2011, MSTW LO** and CTEQ6L1
+     - NOcr
+   - Pythia 8 1.70
+     - 4C,  MSTW 2008 LO and CTEQ6L1
+*** Tree level diagram 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.6
+    :END:
+    [[file:./w-jet-production-tree.png]]
+* Example Cut Flow
+
+* Preliminary Results
+** Charge/Pull Plots
+*** Pull of the Jet 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetPullThetaTy.png}
+*** Charge of Jet*W 					    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_WJetCharge.png}
+* Backup
+** Jet Kinematics 
+*** Jet Multiplicity 				      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMult.png}
+*** Jet $p_T$ 						    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetPt.png}
+
+** Jet Kinematics
+*** Jet Energy 					      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetE.png}
+*** Jet $\eta$ 						    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_env: ignoreheading
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetEta.png}
+
