@@ -255,7 +255,7 @@ namespace Rivet {
     BookedHistos _histograms;
     AIDA::IHistogram2D *_hist2DJetChargeWPt;
     //@}
-    /// @param _nPassing Event count for efficiency study
+    /// @param _nPassing Event count for efficiency studies
     //@{
     int _nPassing[4];
     //@}
