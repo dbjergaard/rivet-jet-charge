@@ -16,27 +16,42 @@
 
 //Namespace slurps
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
 using std::vector;
 using std::map;
 typedef std::map<std::string,std::string> NameTitleMap;
-static void print_histo(TH1* plot, string outname) {
-  TCanvas genericCanvas;
-  //plot->Sumw2();
-  plot->Draw("E1P0");
-  outname = outname + ".eps";
-  genericCanvas.SaveAs(outname.c_str());
-  outname.replace(outname.size()-3,3,"gif");
-  genericCanvas.SaveAs(outname.c_str());
+
+TH1F* mapTGraphAsymmErrorToTH1F(const TGraphAsymmErrors* aidaHist/*, TH1F* rootHist*/) {
+  TH1F* rootHist=nullptr;
+  if(aidaHist){
+    rootHist = aidaHist->GetHistogram();
+    rootHist->SetName(aidaHist->GetName());
+    rootHist->SetTitle(aidaHist->GetTitle());
+    Int_t N=aidaHist->GetN();
+    Double_t* x=aidaHist->GetX(); 
+    //Double_t* ex_hi=aidaHist->GetEXhigh();
+    //Double_t* ex_lo=aidaHist->GetEXlow();
+    Double_t* y=aidaHist->GetY(); 
+    Double_t* ey_hi=aidaHist->GetEYhigh();
+    Double_t* ey_lo=aidaHist->GetEYlow();
+    
+    if(N!=rootHist->GetNbinsX()){
+      rootHist->Rebin(rootHist->GetNbinsX()/N);//DANGER WILL ROBINSON
+    }
+    for(Int_t i=0; i <N; ++i){
+      rootHist->Fill(x[i],y[i]);
+      //rootHist->SetBinContent(i,y[i]);
+      //cout<<"ex_hi: "<<ex_hi[i]<<" ex_lo: "<<ex_lo[i]<<endl;
+      //cout<<"ey_hi: "<<ey_hi[i]<<" ey_lo: "<<ey_lo[i]<<endl;
+      //Over estimate error by taking max of hi or lo error on y
+      rootHist->SetBinError(i,(ey_hi[i] > ey_lo[i]) ? ey_hi[i]:ey_lo[i]);
+    }
+  }
+  return rootHist;
 }
-void usage(const char* name) {
-  printf("Usage: %s [rootfiles]\n",name);
-}
-void mapTGraphAsymmErrorToTH1F(const TGraphAsymmErrors* aidaHist, TH1F* rootHist)  {
-  rootHist = aidaHist->GetHistogram();
-}
-int main(int argc,const char* argv[]) {
+int main(/*int argc,const char* argv[]*/) {
   NameTitleMap canonPlots;
   string y_axis_title="#int f(x) dx #equiv 1";
   canonPlots["JetMult"]="Jet Multiplicity;n;"+y_axis_title;
@@ -75,15 +90,12 @@ int main(int argc,const char* argv[]) {
   foreach(NameTitleMap::value_type plot, canonPlots){
     //map<string,TGraphAsymmErrors*> histos;
     TCanvas c(plot.first.c_str(), plot.second.c_str(),600,600);
+    c.Draw();
     foreach(string& gen, genNames) {
-      TH1F* histo=nullptr;
-      //TGraphAsymmErrors* graph = static_cast<TGraphAsymmErrors*>(genRootfiles[gen]->Get(plot.first.c_str()));
-      cout<<"before histo: "<<histo;
-      mapTGraphAsymmErrorToTH1F(static_cast<TGraphAsymmErrors*>(genRootfiles[gen]->Get(plot.first.c_str())),histo);
-      cout<<"after histo: "<<histo<<endl;
-      
-      }
+      TH1F* histo=mapTGraphAsymmErrorToTH1F(static_cast<TGraphAsymmErrors*>(genRootfiles[gen]->Get(plot.first.c_str())));
+      histo->Draw("same");
+    }
+    c.SaveAs((plot.first+".png").c_str());
   }
-  
   return 0;
 }
