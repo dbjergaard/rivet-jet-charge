@@ -21,7 +21,7 @@
 
 // Histogram booking
 #include "LWH/Histogram1D.h"
-#include "LWH/Histogram2D.h"
+//#include "LWH/Histogram2D.h"
 
 typedef std::map<std::string,AIDA::IHistogram1D*> BookedHistos;
 namespace Rivet {
@@ -99,7 +99,7 @@ namespace Rivet {
       
       _histograms["JetPullTheta"]       = bookHistogram1D("JetPullTheta"	,50,-PI,PI);
       _histograms["JetPullMag"]         = bookHistogram1D("JetPullMag"          ,50,0,0.04);
-      _hist2DJetChargeWPt		= bookHistogram2D("JetChargeVsWPt"	,50,-0.3,0.3,50,24,300);
+      //_hist2DJetChargeWPt		= bookHistogram2D("JetChargeVsWPt"	,50,-0.3,0.3,50,24,300);
       _histograms["TruthDeltaR"]        = bookHistogram1D("TruthDeltaR"         ,50,0,0.7);
       _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,7,-0.5,6.5);
 
@@ -213,7 +213,7 @@ namespace Rivet {
 	  }
 	  _nPassing[3]++;
 	  const double wCharge=static_cast<double>(PID::charge(muWFinder.bosons().front().pdgId()));
-	  const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
+	  //const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
 	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
 	  _histograms["JetMass"]->fill(jets.front().m(),weight);
 	  _histograms["JetPt"]->fill(jets.front().pt(),weight);	
@@ -221,8 +221,8 @@ namespace Rivet {
 	  _histograms["JetEta"]->fill(jets.front().eta(),weight);	
 	  _histograms["JetRapidity"]->fill(jets.front().rapidity(),weight); 
 	  //histograms["JetPhi"]->fill(jets.front().phi(),weight);	
-	  _hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
-	  _histograms["WJetCharge"]->fill(jetCharge,weight);
+	  //_hist2DJetChargeWPt->fill(jetCharge,muWFinder.bosons().front().momentum().pT(),weight);
+	  //_histograms["WJetCharge"]->fill(jetCharge,weight);
 	  _histograms["WCharge"]->fill(wCharge,weight);
 	  _histograms["JetPullMag"]->fill(tvec.first,weight);
 	  if(tvec.first > 0) {
@@ -280,12 +280,13 @@ namespace Rivet {
       cout<<"| Found W   | "<<_nPassing[1]<< " | "<<endl;
       cout<<"| >1 Jet    | "<<_nPassing[2]<< " | "<<endl;
       cout<<"| Fiducial  | "<<_nPassing[3]<< " | "<<endl;
-      cout<<"Mean Jet Charge: "<<_histograms["WJetCharge"]->mean()<<" +/- "<<_histograms["WJetCharge"]->rms()<<endl;
+      cout<<"Mean Jet Charge (k=0.3): "<<_histograms["WJetChargeK3"]->mean()<<" +/- "<<_histograms["WJetChargeK3"]->rms()<<endl;
+      cout<<"Mean Jet Charge (k=0.5): "<<_histograms["WJetChargeK5"]->mean()<<" +/- "<<_histograms["WJetChargeK5"]->rms()<<endl;
 
-      foreach(BookedHistos::value_type H,_histograms){
-	normalize(H.second);
-      }
-      normalize(_hist2DJetChargeWPt);
+      // foreach(BookedHistos::value_type H,_histograms){
+      // 	normalize(H.second);
+      // }
+      // normalize(_hist2DJetChargeWPt);
       
     }
     //@}
@@ -295,7 +296,7 @@ namespace Rivet {
     ///histograms to be added "on the fly" in the init() method.
     //@{
     BookedHistos _histograms;
-    AIDA::IHistogram2D *_hist2DJetChargeWPt;
+    //AIDA::IHistogram2D *_hist2DJetChargeWPt;
     //@}
     /// @param _nPassing Event count for efficiency studies
     //@{
