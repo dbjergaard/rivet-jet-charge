@@ -106,17 +106,18 @@ log files to process"
 	    (when (string-match regexp (buffer-name buf))
 	      (kill-buffer (current-buffer))))) (buffer-list)))
 
-(print-condor-summary "/ssh:dmb60@atl008:~/rivet/Analysis/rivet-jet-charge/MonteCarloParams/Herwig++" "\\.log" "Herwig++")
+;(print-condor-summary "/ssh:dmb60@atl008:~/rivet/Analysis/rivet-jet-charge/MonteCarloParams/Herwig++" "\\.log" "Herwig++")
 
-(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Sherpa" "^out.*" "Sherpa")
+;(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Sherpa" "^out.*" "Sherpa")
 (print-condor-summary
  "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, MSTW LO**"
  (lambda (fname x)
    (find-tune-text fname "355")))
 
-(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, CTEQ6L1" (lambda (fname x)
-   (find-tune-text fname "356")))
 
-(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia8" "^out.*" "Pythia 8" (lambda (fname)
-										     (find-tune-text fname "MSTW2008lo68cl")))
 
+;(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia6" "^out.*" "Pythia 6" "Perugia 2011, CTEQ6L1" (lambda (fname x)
+;   (find-tune-text fname "356")))
+
+;(print-condor-summary "/ssh:dmb60@atl008:~/logs/rivet/Pythia8" "^out.*" "Pythia 8" (lambda (fname)
+;										     (find-tune-text fname "MSTW2008lo68cl")))

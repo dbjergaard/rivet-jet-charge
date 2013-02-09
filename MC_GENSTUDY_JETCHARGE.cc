@@ -72,10 +72,26 @@ namespace Rivet {
 
       //Jet Charge Histos
       _histograms["WCharge"]		= bookHistogram1D("WCharge"		, 3, -1.5, 1.5);
-      _histograms["WJetCharge"]		= bookHistogram1D("WJetCharge"		, 50, -0.3, 0.3);
-      _histograms["QuarkJetCharge"]      = bookHistogram1D("QuarkJetCharge"	, 50, -0.3, 0.3);      
-      _histograms["GluonJetCharge"]      = bookHistogram1D("GluonJetCharge"	, 50, -0.3, 0.3);      
 
+      _histograms["WJetChargeK5"]	= bookHistogram1D("WJetChargeK5"		, 50, -0.3, 0.3);
+      _histograms["QuarkJetChargeK5"]      = bookHistogram1D("QuarkJetChargeK5"	, 50, -0.3, 0.3);      
+      _histograms["GluonJetChargeK5"]      = bookHistogram1D("GluonJetChargeK5"	, 50, -0.3, 0.3);      
+
+      _histograms["WJetChargeK3"]	= bookHistogram1D("WJetChargeK3"		, 50, -0.3, 0.3);
+      _histograms["QuarkJetChargeK3"]      = bookHistogram1D("QuarkJetChargeK3"	, 50, -0.3, 0.3);      
+      _histograms["GluonJetChargeK3"]      = bookHistogram1D("GluonJetChargeK3"	, 50, -0.3, 0.3);      
+
+      _histograms["QuarkNegTwoThirdsK5"] = bookHistogram1D("QuarkNegTwoThirdsK5", 50, -0.3, 0.3);      
+      _histograms["QuarkNegOneThirdK5"] = bookHistogram1D("QuarkNegOneThirdK5", 50, -0.3, 0.3);      
+      _histograms["QuarkOneThirdK5"] = bookHistogram1D("QuarkOneThirdK5", 50, -0.3, 0.3);      
+      _histograms["QuarkTwoThirdsK5"] = bookHistogram1D("QuarkTwoThirdsK5", 50, -0.3, 0.3);      
+
+      _histograms["QuarkNegTwoThirdsK3"] = bookHistogram1D("QuarkNegTwoThirdsK3", 50, -0.3, 0.3);      
+      _histograms["QuarkNegOneThirdK3"] = bookHistogram1D("QuarkNegOneThirdK3", 50, -0.3, 0.3);      
+      _histograms["QuarkOneThirdK3"] = bookHistogram1D("QuarkOneThirdK3", 50, -0.3, 0.3);      
+      _histograms["QuarkTwoThirdsK3"] = bookHistogram1D("QuarkTwoThirdsK3", 50, -0.3, 0.3);      
+
+      
       _histograms["ChargeSignPurity"]   = bookHistogram1D("ChargeSignPurity"    ,50,33,300);
 
       _histograms["QuarkJetPt"]         = bookHistogram1D("QuarkJetPt"          ,50,33,300);
@@ -105,7 +121,34 @@ namespace Rivet {
 	stddev+=((jet.pt()-mean)*(jet.pt()-mean));
       stddev=stddev/N;
     }
-
+    virtual void fillChargeHistograms(const fastjet::PseudoJet& jet, const FastJets& JetProjection,
+				      const double k, const double wCharge,
+				      const double weight, const unsigned int pdgId){
+      stringstream kStr; kStr<<"K"<<static_cast<int>(k*10);
+      const double jetCharge = wCharge*JetProjection.JetCharge(jet,k,1*GeV);
+      _histograms["QuarkJetCharge"+kStr.str()]->fill(jetCharge,weight);
+      if(pdgId < 7) {
+	_histograms["QuarkJetCharge"+kStr.str()]->fill(jetCharge,weight);
+	double truthCharge = wCharge*PID::charge(pdgId);
+	if(truthCharge==-2.0/3){
+	  _histograms["QuarkNegTwoThirds"+kStr.str()]->fill(jetCharge,weight);
+	}
+	else if (truthCharge==-1.0/3){
+	  _histograms["QuarkNegOneThird"+kStr.str()]->fill(jetCharge,weight);
+	}
+	else if (truthCharge==1.0/3){
+	  _histograms["QuarkOneThird"+kStr.str()]->fill(jetCharge,weight);
+	}
+	else if (truthCharge==2.0/3){
+	  _histograms["QuarkTwoThirds"+kStr.str()]->fill(jetCharge,weight);
+	}
+      }
+      else if(pdgId  == 21){
+	_histograms["GluonJetCharge"+kStr.str()]->fill(jetCharge,weight);
+      }
+      
+    }
+      
     virtual void analyzeSubJets(const fastjet::PseudoJet& jet,const double weight) {
       const double ptmin=0.5*GeV;
       double sumEt=0.0;
@@ -214,15 +257,14 @@ namespace Rivet {
 	  }
 	  unsigned int pdgId = abs(truthParton->pdg_id());
 	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 : pdgId, weight);
+	  fillChargeHistograms(jets.front(), JetProjection, 0.3, wCharge, weight, pdgId);
 	  if(pdgId < 7) {
-	    _histograms["QuarkJetCharge"]->fill(jetCharge,weight);
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
-	    if(wCharge*PID::charge(truthParton->pdg_id()) > 0.0) {
+	    if(wCharge*PID::charge(pdgId) > 0.0) {
 	      _histograms["ChargeSignPurity"]->fill(jets.front().pt(),weight);
 	    }
 	  }
 	  else if(pdgId  == 21){
-	    _histograms["GluonJetCharge"]->fill(jetCharge,weight);
 	    _histograms["GluonJetPt"]->fill(jets.front().pt(),weight);
 	  }
 	}	      

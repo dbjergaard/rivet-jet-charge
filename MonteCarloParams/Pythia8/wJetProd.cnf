@@ -31,8 +31,5 @@ Tune:pp = 10 ! use Tune 4C
 ! ParticleDecays:limitTau0 = On
 ! ParticleDecays:tau0Max = 10.0
 
-! Setup PDFs (8==CTEQ6L1, 5==MSTW 2008 LO, 2==Default)
-PDF:pSet = 2
-
 Random:setSeed = on
 Random:seed = 1234

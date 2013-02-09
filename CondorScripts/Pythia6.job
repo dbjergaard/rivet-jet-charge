@@ -17,12 +17,12 @@ get_env = True
 Notification = Never
 
 # PYTUNE=350, Perugia 2011
-#Arguments = $(Process) 350
-#Queue 40
+Arguments = $(Process) 350
+Queue 40
 
 # PYTUNE=354 NOcr
-#Arguments = $(Process) 354
-#Queue 40
+Arguments = $(Process) 354
+Queue 40
 
 # PYTUNE=355, Perugia 2011, MSTW LO**
 Arguments = $(Process) 355
