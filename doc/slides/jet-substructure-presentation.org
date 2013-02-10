@@ -47,10 +47,11 @@
      - |\eta|< 1.9 (MaxEta-JetConeSize)
    - Truth: Highest p_T parton within a 0.4 Cone of Highest p_T jet
 * Generators/PDFs
+** Generators/PDFs
 *** Analysis :B_ignoreheading:BMCOL:
     :PROPERTIES:
     :BEAMER_env: ignoreheading
-    :BEAMER_col: 0.4
+    :BEAMER_col: 0.5
     :END:
  - I've investigated Jet Charge from W+Jets across a suite of
    generators, tunes, and PDFs
@@ -63,7 +64,7 @@
      - 4C,  MSTW 2008 LO and CTEQ6L1
 *** Tree level diagram 					    :BMCOL:B_example:
    :PROPERTIES:
-    :BEAMER_col: 0.6
+    :BEAMER_col: 0.5
     :END:
     [[file:./w-jet-production-tree.png]]
 * Example Cut Flow
