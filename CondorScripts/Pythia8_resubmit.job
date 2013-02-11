@@ -18,23 +18,5 @@ Notification = Never
 
 Arguments = 1 10   
 Queue 1
-Arguments = 2 10   
-Queue 1
-Arguments = 17 10  
-Queue 1
-Arguments = 19 10  
-Queue 1
-Arguments = 30 10  
-Queue 1
-Arguments = 32 10  
-Queue 1
 Arguments = 36 10  
-Queue 1
-Arguments = 37 10  
-Queue 1
-Arguments = 38 10  
-Queue 1
-Arguments = 43 9   
-Queue 1
-Arguments = 77 9   
 Queue 1
