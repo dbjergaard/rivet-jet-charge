@@ -16,29 +16,9 @@ stream_error = True
 get_env = True
 Notification = Never
 
-Arguments = 0 10   
-Queue 1
 Arguments = 10 10  
-Queue 1
-Arguments = 11 10  
 Queue 1
 Arguments = 20 10  
 Queue 1
 Arguments = 23 10  
-Queue 1
-Arguments = 37 10  
-Queue 1
-Arguments = 44 9   
-Queue 1
-Arguments = 45 9   
-Queue 1
-Arguments = 46 9   
-Queue 1
-Arguments = 50 9   
-Queue 1
-Arguments = 57 9   
-Queue 1
-Arguments = 65 9   
-Queue 1
-Arguments = 79 9   
 Queue 1
