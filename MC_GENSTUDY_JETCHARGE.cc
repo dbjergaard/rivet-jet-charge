@@ -73,23 +73,23 @@ namespace Rivet {
       //Jet Charge Histos
       _histograms["WCharge"]		= bookHistogram1D("WCharge"		, 3, -1.5, 1.5);
 
-      _histograms["WJetChargeK5"]	= bookHistogram1D("WJetChargeK5"		, 50, -0.3, 0.3);
-      _histograms["QuarkJetChargeK5"]      = bookHistogram1D("QuarkJetChargeK5"	, 50, -0.3, 0.3);      
-      _histograms["GluonJetChargeK5"]      = bookHistogram1D("GluonJetChargeK5"	, 50, -0.3, 0.3);      
+      _histograms["WJetChargeK5"]	= bookHistogram1D("WJetChargeK5"		, 50, -3, 3);
+      _histograms["QuarkJetChargeK5"]      = bookHistogram1D("QuarkJetChargeK5"	, 50, -3, 3);      
+      _histograms["GluonJetChargeK5"]      = bookHistogram1D("GluonJetChargeK5"	, 50, -3, 3);      
 
-      _histograms["WJetChargeK3"]	= bookHistogram1D("WJetChargeK3"		, 50, -0.3, 0.3);
-      _histograms["QuarkJetChargeK3"]      = bookHistogram1D("QuarkJetChargeK3"	, 50, -0.3, 0.3);      
-      _histograms["GluonJetChargeK3"]      = bookHistogram1D("GluonJetChargeK3"	, 50, -0.3, 0.3);      
+      _histograms["WJetChargeK3"]	= bookHistogram1D("WJetChargeK3"		, 50, -3, 3);
+      _histograms["QuarkJetChargeK3"]      = bookHistogram1D("QuarkJetChargeK3"	, 50, -3, 3);      
+      _histograms["GluonJetChargeK3"]      = bookHistogram1D("GluonJetChargeK3"	, 50, -3, 3);      
 
-      _histograms["QuarkNegTwoThirdsK5"] = bookHistogram1D("QuarkNegTwoThirdsK5", 50, -0.3, 0.3);      
-      _histograms["QuarkNegOneThirdK5"] = bookHistogram1D("QuarkNegOneThirdK5", 50, -0.3, 0.3);      
-      _histograms["QuarkOneThirdK5"] = bookHistogram1D("QuarkOneThirdK5", 50, -0.3, 0.3);      
-      _histograms["QuarkTwoThirdsK5"] = bookHistogram1D("QuarkTwoThirdsK5", 50, -0.3, 0.3);      
+      _histograms["QuarkNegTwoThirdsK5"] = bookHistogram1D("QuarkNegTwoThirdsK5", 50, -3, 3);      
+      _histograms["QuarkNegOneThirdK5"] = bookHistogram1D("QuarkNegOneThirdK5", 50, -3, 3);      
+      _histograms["QuarkOneThirdK5"] = bookHistogram1D("QuarkOneThirdK5", 50, -3, 3);      
+      _histograms["QuarkTwoThirdsK5"] = bookHistogram1D("QuarkTwoThirdsK5", 50, -3, 3);      
 
-      _histograms["QuarkNegTwoThirdsK3"] = bookHistogram1D("QuarkNegTwoThirdsK3", 50, -0.3, 0.3);      
-      _histograms["QuarkNegOneThirdK3"] = bookHistogram1D("QuarkNegOneThirdK3", 50, -0.3, 0.3);      
-      _histograms["QuarkOneThirdK3"] = bookHistogram1D("QuarkOneThirdK3", 50, -0.3, 0.3);      
-      _histograms["QuarkTwoThirdsK3"] = bookHistogram1D("QuarkTwoThirdsK3", 50, -0.3, 0.3);      
+      _histograms["QuarkNegTwoThirdsK3"] = bookHistogram1D("QuarkNegTwoThirdsK3", 50, -3, 3);      
+      _histograms["QuarkNegOneThirdK3"] = bookHistogram1D("QuarkNegOneThirdK3", 50, -3, 3);      
+      _histograms["QuarkOneThirdK3"] = bookHistogram1D("QuarkOneThirdK3", 50, -3, 3);      
+      _histograms["QuarkTwoThirdsK3"] = bookHistogram1D("QuarkTwoThirdsK3", 50, -3, 3);      
 
       
       _histograms["ChargeSignPurity"]   = bookHistogram1D("ChargeSignPurity"    ,50,33,300);
@@ -122,25 +122,26 @@ namespace Rivet {
       stddev=stddev/N;
     }
     virtual void fillChargeHistograms(const fastjet::PseudoJet& jet, const FastJets& JetProjection,
-				      const double k, const double wCharge,
+				      const double k, const int wCharge,
 				      const double weight, const unsigned int pdgId){
       stringstream kStr; kStr<<"K"<<static_cast<int>(k*10);
       const double jetCharge = wCharge*JetProjection.JetCharge(jet,k,1*GeV);
-      _histograms["QuarkJetCharge"+kStr.str()]->fill(jetCharge,weight);
+      _histograms["WJetCharge"+kStr.str()]->fill(jetCharge,weight);
       if(pdgId < 7) {
 	_histograms["QuarkJetCharge"+kStr.str()]->fill(jetCharge,weight);
-	double truthCharge = wCharge*PID::charge(pdgId);
-	if(truthCharge==-2.0/3){
+	switch(wCharge*PID::threeCharge(pdgId)){
+	case -2:
 	  _histograms["QuarkNegTwoThirds"+kStr.str()]->fill(jetCharge,weight);
-	}
-	else if (truthCharge==-1.0/3){
+	  break;
+	case -1:
 	  _histograms["QuarkNegOneThird"+kStr.str()]->fill(jetCharge,weight);
-	}
-	else if (truthCharge==1.0/3){
+	  break;
+	case 1:
 	  _histograms["QuarkOneThird"+kStr.str()]->fill(jetCharge,weight);
-	}
-	else if (truthCharge==2.0/3){
+	  break;
+	case 2:
 	  _histograms["QuarkTwoThirds"+kStr.str()]->fill(jetCharge,weight);
+	  break;
 	}
       }
       else if(pdgId  == 21){
@@ -212,7 +213,7 @@ namespace Rivet {
 	    }
 	  }
 	  _nPassing[3]++;
-	  const double wCharge=static_cast<double>(PID::charge(muWFinder.bosons().front().pdgId()));
+	  const double wCharge=PID::charge(muWFinder.bosons().front().pdgId());
 	  //const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
 	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
 	  _histograms["JetMass"]->fill(jets.front().m(),weight);
@@ -257,7 +258,8 @@ namespace Rivet {
 	  }
 	  unsigned int pdgId = abs(truthParton->pdg_id());
 	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 : pdgId, weight);
-	  fillChargeHistograms(jets.front(), JetProjection, 0.3, wCharge, weight, pdgId);
+	  fillChargeHistograms(jets.front(), JetProjection, 0.3, static_cast<int>(wCharge), weight, pdgId);
+	  fillChargeHistograms(jets.front(), JetProjection, 0.5, wCharge, weight, pdgId);
 	  if(pdgId < 7) {
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
 	    if(wCharge*PID::charge(pdgId) > 0.0) {

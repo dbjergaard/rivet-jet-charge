@@ -13,24 +13,29 @@ SetAtlasStyle()
 # right... Very Clever ATLAS style
 
 ratioHistos = [
-    ['QuarkJetPt','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False],
-    ['ChargeSignPurity','Ratio of Right-Signed Charge-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False],
-    #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False]
+    ['QuarkJetPt','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
+    ['ChargeSignPurity','Ratio of Right-Signed Charge-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
+    #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0]
 ]
 stackHistos =[
-    ['GluonJetCharge',' Truth-Gluon',False, kGreen-3],
-    ['QuarkJetCharge',' Truth-Quark',False,kAzure-6],
-    ['WJetCharge','Measured Charge',False,kBlue+3]
+    ['GluonJetCharge','Truth-Gluon',False, kGreen-3,1.0],
+    ['QuarkJetCharge','Truth-Quark',False,kAzure-6],
+    ["QuarkNegTwoThirds",'Truth-Q=-2/3',True,kAzure-1,1.0],
+    ["QuarkNegOneThird",'Truth-Q=-1/3',True,kAzure-2,1.0],
+    ["QuarkOneThird",'Truth-Q=1/3',True,kAzure-3,1.0],
+    ["QuarkTwoThirds",'Truth-Q=2/3',True,kAzure-4,1.0],
+    #['WJetCharge','Measured Charge',False,kBlue+3,0.0]
 ]
 canonHistos =[
-    #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False],
-    #['JetEta','#eta distribution of Jets;#eta;#scale[0.8]{#int} f(x) dx #equiv 1 ',False],
-    ['JetMult','Jet Multiplicity;n;#scale[0.8]{#int} f(x) dx #equiv 1 ',False],
-    ['TruthDeltaR','#Delta R of truth parton to jet;sterad;#scale[0.8]{#int} f(x) dx #equiv 1 ',False],
-    ['WJetCharge',' Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',False],
-    #['JetPullTheta',' Jet Pull #theta_{t} ;#theta_{t};#scale[0.8]{#int} f(x) dx #equiv 1 ',False],
-    #['JetPullMag',' Jet Pull Magnitude |t| ;|t|;#scale[0.8]{#int} f(x) dx #equiv 1 ',False],
-    ['TruthPdgID',' PdgID of truth quark;n;#scale[0.8]{#int} f(x) dx #equiv 1 ',False]
+    #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,1.0],
+    #['JetEta','#eta distribution of Jets;#eta;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    ['JetMult','Jet Multiplicity;n;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    ['TruthDeltaR','#Delta R of truth parton to jet;sterad;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    #['WJetChargeK5',' Jet charge #times W charge  (Q_{j} Q_{W}) (k=0.5);e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    ['WJetChargeK3',' Jet charge #times W charge  (Q_{j} Q_{W}) (k=0.3);e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    #['JetPullTheta',' Jet Pull #theta_{t} ;#theta_{t};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    #['JetPullMag',' Jet Pull Magnitude |t| ;|t|;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    ['TruthPdgID',' PdgID of truth quark;n;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0]
 ]
 boost_generators = [
     ['Pythia6.Perugia.2011','Pythia 6, Perugia 2011',kCyan+3],
@@ -44,7 +49,7 @@ pythia_generators = [
     ['Pythia6.CTEQ6L1','Pythia 6, CTEQ6L1',kCyan+1],
     ['Pythia6.MSTWLO','Pythia 6, MSTWLO**',kCyan+3],
     ['Pythia8.MSTW2008','Pythia 8, 4C, MSTW 2008',kMagenta+2],
-    ['Pythia8.CTEQ6L1','Pythia 8, CTEQ6L1',kMagenta]
+    ['Pythia8.CTEQ6L1','Pythia 8, 4C, CTEQ6L1',kMagenta]
 ]
 def set_hist_opts(hist, color):
     hist.SetLineColor(color)
@@ -60,7 +65,10 @@ def process_gens(generators, histName, legend, stackHist):
     legend.SetFillColor(0)
     legend.SetBorderSize(0)
     for gen in generators:
+        #print "Getting ", histName, "from",gen[0]
         h = gen[-1].Get(histName)
+        if h.Integral() != 0:
+            h.Scale(1.0/h.Integral())
         set_hist_opts(h,gen[2])
         stackHist.Add(h)
         legend.AddEntry(h,gen[1])
@@ -108,23 +116,24 @@ for gen in pythia_generators:
 print_canon_hists('BOOST_',boost_generators)
 print_canon_hists('PDFComparison_',pythia_generators)
 # Stack Quark and Gluon charge to show relative fractions
-hs = THStack('JetChargeStacked','Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ')
-c = TCanvas('JetChargeStacked','Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',800,600)
-leg = TLegend(0.72,0.75,.95,0.95)
-leg.SetFillColor(0)
-leg.SetBorderSize(0)
-#chargeHist = generators[1][-1].Get('WJetCharge')
-for histo in stackHistos:
-    h = boost_generators[1][-1].Get(histo[0])
-    set_hist_opts(h,histo[3])
-    if histo[0]!='WJetCharge':
-        h.Scale(0.5)
-    hs.Add(h)
-    leg.AddEntry(h,histo[1])
-hs.Draw('Hnostack')
-leg.Draw()
-c.RedrawAxis()
-c.Print(hs.GetName()+'.png')
+klist=['K3']
+for k in klist:
+    hs = THStack('JetChargeStacked','Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ')
+    c = TCanvas('JetChargeStacked','Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',800,600)
+    leg = TLegend(0.72,0.75,.95,0.95)
+    leg.SetFillColor(0)
+    leg.SetBorderSize(0)
+    for histo in stackHistos:
+        h = boost_generators[1][-1].Get(histo[0]+k)
+        if h.Integral() != 0:
+            h.Scale(1.0/h.Integral())
+        set_hist_opts(h,histo[3])
+        hs.Add(h)
+        leg.AddEntry(h,histo[1])
+    hs.Draw('Hnostack')
+    leg.Draw()
+    c.RedrawAxis()
+    c.Print(hs.GetName()+k+'.png')
 # Produce ratio plots
 print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[0],'GluonJetPt',True)
 print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[1],'QuarkJetPt',False)

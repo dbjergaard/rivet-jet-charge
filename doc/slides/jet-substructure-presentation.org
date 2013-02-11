@@ -1,5 +1,5 @@
-#+TITLE:     Jet Charge in W+Jets events 
-#+AUTHOR:    Maximilian Swiatlowski, Benjamin Nachman, _David Bjergaard_
+#+TITLE:     A second look at Jet Charge 
+#+AUTHOR:    _David Bjergaard_
 #+EMAIL:     david.b@duke.edu
 #+DATE:      Wednesday, February 06th, 2013
 #+DESCRIPTION: 
@@ -25,15 +25,47 @@
 
 * Introduction
 \unitlength = 1mm
-** Jet Substructure
-   - Boost 2012 is looking into many substructure observables, I'm
-     looking into jet charge and jet pull. 
-   - Jet Charge is defined as
+** Jet Charge
+   - Jet Charge provides a handle into the originating parton in QCD
+     interactions, this increases discrimination of interesting
+     (hadronic) physics processes (b\bar{b}, t\bar{t}, W)-tagging
+   - /Reminder:/ Jet Charge is defined as
      $$
      Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
      $$
-     Put in words, its the sum of the charge of the constituent particles
-     weighted by the particle's transverse momentum.
+   - Jet Charge has been studied in arXiv:1209.2421 (Krohn et. al),
+     and ([[http://tinyurl.com/Nachman-JetCharge][Nachman et. al]]) http://tinyurl.com/Nachman-JetCharge
+   - It has nice experimental and theoretical features (weight
+     against hard or soft constituents depending on \kappa)
+   - It can distinguish the sign of the originating quark
+   - Jet charge does not have good discrimination between same
+     generation quark charges.
+** Why W+Jets?
+- Complements current t\bar{t} studies
+- The W-channel has small backgrounds (QCD, Z+jets, t\bar{t}) in this
+  kinematic regime.
+*** PDG ID frequency (0==Gluon,Quarks < 7) 	      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{./BOOST_TruthPdgID.png}
+*** Tree-level Diagram 					    :BMCOL:B_example:
+   :PROPERTIES:
+   :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{w-jet-production-tree.png}
+** Kinematic motivations for W+Jets
+*** Fraction of right-signed charge in p_T 	      :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{./BOOST_ChargeSignPurity.png}
+*** Fraction of Quarks in p_T 				    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{./BOOST_QuarkJetPt.png}
+
 ** Analysis Cuts
    - Jets are clustered using $\bar{k_T} 0.6$
    - Selections on the Muon:
