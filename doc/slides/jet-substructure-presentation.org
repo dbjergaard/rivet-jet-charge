@@ -35,11 +35,6 @@
      $$
    - Jet Charge has been studied in arXiv:1209.2421 (Krohn et. al),
      and ([[http://tinyurl.com/Nachman-JetCharge][Nachman et. al]]) http://tinyurl.com/Nachman-JetCharge
-   - It has nice experimental and theoretical features (weight
-     against hard or soft constituents depending on \kappa)
-   - It can distinguish the sign of the originating quark
-   - Jet charge does not have good discrimination between same
-     generation quark charges.
 ** Why W+Jets?
 - Complements current t\bar{t} studies
 - The W-channel has small backgrounds (QCD, Z+jets, t\bar{t}) in this
@@ -53,7 +48,7 @@
    :PROPERTIES:
    :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{w-jet-production-tree.png}
+    \includegraphics[scale=0.15]{w-jet-production-tree.png}
 ** Kinematic motivations for W+Jets
 *** Fraction of right-signed charge in p_T 	      :B_ignoreheading:BMCOL:
     :PROPERTIES:
@@ -65,82 +60,62 @@
     :BEAMER_col: 0.5
     :END:
     \includegraphics[scale=0.19]{./BOOST_QuarkJetPt.png}
-
 ** Analysis Cuts
-   - Jets are clustered using $\bar{k_T} 0.6$
-   - Selections on the Muon:
-   - |\eta|<2.4
-     - p_T > 25 GeV/c
-     - \Delta R >0.6 (Minimum delta R between muon and a jet)
-   - Selections on the W
-     - 40 GeV/c^2 < m_T < 1000 GeV/c^2
-     - Targeted mass: 80.4 GeV/c^2
-   - Selections on the highest p_T jet
-     - |\eta|< 1.9 (MaxEta-JetConeSize)
-   - Truth: Highest p_T parton within a 0.4 Cone of Highest p_T jet
-* Generators/PDFs
-** Generators/PDFs
-*** Analysis :B_ignoreheading:BMCOL:
-    :PROPERTIES:
-    :BEAMER_env: ignoreheading
-    :BEAMER_col: 0.5
-    :END:
- - I've investigated Jet Charge from W+Jets across a suite of
-   generators, tunes, and PDFs
-   - Sherpa 1.4.2
-   - Herwig++ 2.6.1a
-   - Pythia 6 4.26
-     - Perugia 2011, MSTW LO** and CTEQ6L1
-     - NOcr
-   - Pythia 8 1.70
-     - 4C,  MSTW 2008 LO and CTEQ6L1
-*** Tree level diagram 					    :BMCOL:B_example:
-   :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-    [[file:./w-jet-production-tree.png]]
-* Example Cut Flow
-
+  - Jets are clustered using 
+  - Truth-level study in \mu+jets channel
+  - \mu |\eta|<2.5,  p_T > 25 GeV/c
+    - \Delta R >0.6 (Minimum delta R between muon and a jet)
+  - m_T(W) > 40 GeV/c^2
+  - MET > 25 GeV
+  - leading jet ($\bar{k_T} 0.6$) p_T > 35 GeV/c, |\eta|< 1.9
+    - Fully fiducial to tracker
+  - Truth (See Nachman cited earlier): leading parton in cone 0.4
+    around jet axis
 * Preliminary Results
-** Charge/Pull Plots
-*** Pull of the Jet 				      :B_ignoreheading:BMCOL:
+** Truth Jet Charge
+*** Truth Jet Charge distribution (\kappa=0.3) 	      :B_ignoreheading:BMCOL:
     :PROPERTIES:
-    :BEAMER_env: ignoreheading
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetPullThetaTy.png}
-*** Charge of Jet*W 					    :BMCOL:B_example:
+    \includegraphics[scale=0.19]{./JetChargeStackedK3.png}
+*** Truth Jet Charge distribution (\kappa=0.5) 		    :BMCOL:B_example:
    :PROPERTIES:
-    :BEAMER_env: ignoreheading
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_WJetCharge.png}
+    \includegraphics[scale=0.19]{./JetChargeStackedK5.png}
+** Generator and PDF response in Q_W Q_j
+*** Jet Charge in a suite of generators (\kappa=0.5)  :B_ignoreheading:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{./BOOST_WJetChargeK5.png}
+*** Jet Charge in different PDFs (\kappa=0.5) 		    :BMCOL:B_example:
+   :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+    \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK5.png}
+* Status and Plans
+** Updates from Stanford
+   Please write me someone!
+** Final Thoughts
+ - Despite variations in modeling philosophies, jet-charge is
+   insensitive to these differences across a suite of generators,
+   tunes, and PDFs.
+ - *Future*
+   - Currently investigating jet-charge response as a function of p_T
+   - Want to measure Q_{quark} vs. p_T in data
+   - Nail down jet-charge as a standard observable
+     - Profit from new experimental reach in signal-background
+       discrimination 
 * Backup
-** Jet Kinematics 
-*** Jet Multiplicity 				      :B_ignoreheading:BMCOL:
+** Generator and PDF response in Q_W Q_j
+*** Jet Charge in a suite of generators (\kappa=0.3)  :B_ignoreheading:BMCOL:
     :PROPERTIES:
-    :BEAMER_env: ignoreheading
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetMult.png}
-*** Jet $p_T$ 						    :BMCOL:B_example:
+    \includegraphics[scale=0.19]{./BOOST_WJetChargeK3.png}
+*** Jet Charge in different PDFs (\kappa=0.3) 		    :BMCOL:B_example:
    :PROPERTIES:
-    :BEAMER_env: ignoreheading
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetPt.png}
-
-** Jet Kinematics
-*** Jet Energy 					      :B_ignoreheading:BMCOL:
-    :PROPERTIES:
-    :BEAMER_env: ignoreheading
-    :BEAMER_col: 0.5
-    :END:
-    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetE.png}
-*** Jet $\eta$ 						    :BMCOL:B_example:
-   :PROPERTIES:
-    :BEAMER_env: ignoreheading
-    :BEAMER_col: 0.5
-    :END:
-    \includegraphics[scale=0.19]{../../plots/png/MC_GENSTUDY_JETCHARGE_JetEta.png}
-
+    \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK3.png}

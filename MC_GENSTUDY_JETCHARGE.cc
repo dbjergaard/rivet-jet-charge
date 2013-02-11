@@ -259,7 +259,7 @@ namespace Rivet {
 	  unsigned int pdgId = abs(truthParton->pdg_id());
 	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 : pdgId, weight);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.3, static_cast<int>(wCharge), weight, pdgId);
-	  fillChargeHistograms(jets.front(), JetProjection, 0.5, wCharge, weight, pdgId);
+	  fillChargeHistograms(jets.front(), JetProjection, 0.5, static_cast<int>(wCharge), weight, pdgId);
 	  if(pdgId < 7) {
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
 	    if(wCharge*PID::charge(pdgId) > 0.0) {
