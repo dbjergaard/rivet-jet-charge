@@ -18,13 +18,13 @@ ratioHistos = [
     #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0]
 ]
 stackHistos =[
-    ['GluonJetCharge','Truth-Gluon',False, kGreen-3,1.0],
-    ['QuarkJetCharge','Truth-Quark',False,kAzure-6],
-    ["QuarkNegTwoThirds",'Truth-Q=-2/3',True,kAzure-1,1.0],
-    ["QuarkNegOneThird",'Truth-Q=-1/3',True,kAzure-2,1.0],
-    ["QuarkOneThird",'Truth-Q=1/3',True,kAzure-3,1.0],
-    ["QuarkTwoThirds",'Truth-Q=2/3',True,kAzure-4,1.0],
-    #['WJetCharge','Measured Charge',False,kBlue+3,0.0]
+    ['GluonJetCharge','Truth-Gluon',False, kCyan-7,0.0],
+    #['QuarkJetCharge','Truth-Quark',False,kAzure-6,0.0],
+    ["QuarkNegTwoThirds",'Truth-Q=-2/3',True,kYellow-7,0.0],
+    ["QuarkNegOneThird",'Truth-Q=-1/3',True,kGreen-7,0.0],
+    ["QuarkOneThird",'Truth-Q=1/3',True,kMagenta-7,0.0],
+    ["QuarkTwoThirds",'Truth-Q=2/3',True,kBlue-7,0.0],
+    #['WJetCharge','Measured Charge',False,kRed+3,0.0]
 ]
 canonHistos =[
     #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,1.0],
@@ -99,6 +99,8 @@ def print_ratio_hists(outPrefix,generators,histo,denHistName,sumDen):
         numHist = gen[-1].Get(histo[0])
         if sumDen:
             denHist.Add(numHist)
+        denHist.Rebin(5)
+        numHist.Rebin(5)
         numHist.Divide(denHist)
         set_hist_opts(numHist,gen[2])
         hs.Add(numHist)
@@ -112,28 +114,32 @@ for gen in boost_generators:
     gen.append(TFile('rootfiles/'+gen[0]+'.root'));
 for gen in pythia_generators:
     gen.append(TFile('rootfiles/'+gen[0]+'.root'));
-# Print the 'canonical' histograms
-print_canon_hists('BOOST_',boost_generators)
-print_canon_hists('PDFComparison_',pythia_generators)
 # Stack Quark and Gluon charge to show relative fractions
-klist=['K3']
+klist=['K3','K5']
 for k in klist:
-    hs = THStack('JetChargeStacked','Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ')
-    c = TCanvas('JetChargeStacked','Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',800,600)
+    hs = THStack('JetChargeStacked'+k,'Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ')
+    c = TCanvas('JetChargeStacked'+k,'Jet charge #times W charge  (Q_{j} Q_{W});e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',800,600)
     leg = TLegend(0.72,0.75,.95,0.95)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     for histo in stackHistos:
-        h = boost_generators[1][-1].Get(histo[0]+k)
-        if h.Integral() != 0:
-            h.Scale(1.0/h.Integral())
-        set_hist_opts(h,histo[3])
+            
+        h = boost_generators[2][-1].Get(histo[0]+k)
+        set_hist_opts(h,histo[3]+3)
+        #h.SetFillColor(histo[3])
+        #h.SetFillStyle(1001)
         hs.Add(h)
         leg.AddEntry(h,histo[1])
-    hs.Draw('Hnostack')
+    total = boost_generators[2][-1].Get('WJetCharge'+k)
+    hs.Draw('H')
+    total.Draw('same')
+    leg.AddEntry(total,'Measured Charge')
     leg.Draw()
     c.RedrawAxis()
-    c.Print(hs.GetName()+k+'.png')
+    c.Print(hs.GetName()+'.png')
+# Print the 'canonical' histograms
+print_canon_hists('BOOST_',boost_generators)
+print_canon_hists('PDFComparison_',pythia_generators)
 # Produce ratio plots
 print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[0],'GluonJetPt',True)
 print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[1],'QuarkJetPt',False)

@@ -84,16 +84,16 @@
     :END:
     \includegraphics[scale=0.19]{./JetChargeStackedK5.png}
 ** Generator and PDF response in Q_W Q_j
-*** Jet Charge in a suite of generators (\kappa=0.5)  :B_ignoreheading:BMCOL:
+*** Jet Charge in a suite of generators (\kappa=0.3)  :B_ignoreheading:BMCOL:
     :PROPERTIES:
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{./BOOST_WJetChargeK5.png}
-*** Jet Charge in different PDFs (\kappa=0.5) 		    :BMCOL:B_example:
+    \includegraphics[scale=0.19]{./BOOST_WJetChargeK3.png}
+*** Jet Charge in different PDFs (\kappa=0.3) 		    :BMCOL:B_example:
    :PROPERTIES:
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK5.png}
+    \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK3.png}
 * Status and Plans
 ** Updates from Stanford
    Please write me someone!
@@ -109,13 +109,13 @@
        discrimination 
 * Backup
 ** Generator and PDF response in Q_W Q_j
-*** Jet Charge in a suite of generators (\kappa=0.3)  :B_ignoreheading:BMCOL:
+*** Jet Charge in a suite of generators (\kappa=0.5)  :B_ignoreheading:BMCOL:
     :PROPERTIES:
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{./BOOST_WJetChargeK3.png}
-*** Jet Charge in different PDFs (\kappa=0.3) 		    :BMCOL:B_example:
+    \includegraphics[scale=0.19]{./BOOST_WJetChargeK5.png}
+*** Jet Charge in different PDFs (\kappa=0.5) 		    :BMCOL:B_example:
    :PROPERTIES:
     :BEAMER_col: 0.5
     :END:
-    \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK3.png}
+    \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK5.png}

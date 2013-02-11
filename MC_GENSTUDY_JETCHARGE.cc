@@ -262,7 +262,7 @@ namespace Rivet {
 	  fillChargeHistograms(jets.front(), JetProjection, 0.5, static_cast<int>(wCharge), weight, pdgId);
 	  if(pdgId < 7) {
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
-	    if(wCharge*PID::charge(pdgId) > 0.0) {
+	    if(wCharge*PID::charge(pdgId) < 0.0) {
 	      _histograms["ChargeSignPurity"]->fill(jets.front().pt(),weight);
 	    }
 	  }
