@@ -19,7 +19,43 @@ Notification = Never
 # PYTUNE=350, Perugia 2011
 # PYTUNE=354 NOcr
 
+Arguments = 7 350  
+Queue 1
 Arguments = 13 350 
 Queue 1
-Arguments = 15 350 
+Arguments = 14 350 
+Queue 1
+Arguments = 21 350 
+Queue 1
+Arguments = 28 350 
+Queue 1
+Arguments = 31 350 
+Queue 1
+Arguments = 33 350 
+Queue 1
+Arguments = 34 350 
+Queue 1
+Arguments = 47 354 
+Queue 1
+Arguments = 57 354 
+Queue 1
+Arguments = 64 354 
+Queue 1
+Arguments = 66 354 
+Queue 1
+Arguments = 73 354 
+Queue 1
+Arguments = 77 354 
+Queue 1
+Arguments = 82 355 
+Queue 1
+Arguments = 85 355 
+Queue 1
+Arguments = 99 355 
+Queue 1
+Arguments = 100 355
+Queue 1
+Arguments = 101 355
+Queue 1
+Arguments = 111 355
 Queue 1
