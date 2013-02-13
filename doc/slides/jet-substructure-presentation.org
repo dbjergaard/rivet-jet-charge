@@ -61,7 +61,6 @@
     :END:
     \includegraphics[scale=0.19]{./BOOST_QuarkJetPt.png}
 ** Analysis Cuts
-  - Jets are clustered using 
   - Truth-level study in \mu+jets channel
   - \mu |\eta|<2.5,  p_T > 25 GeV/c
     - \Delta R >0.6 (Minimum delta R between muon and a jet)
@@ -95,12 +94,10 @@
     :END:
     \includegraphics[scale=0.19]{./PDFComparison_WJetChargeK3.png}
 * Status and Plans
-** Updates from Stanford
-   Please write me someone!
 ** Final Thoughts
- - Despite variations in modeling philosophies, jet-charge is
-   insensitive to these differences across a suite of generators,
-   tunes, and PDFs.
+ - Despite variations in parton fractions and shower models,
+   jet-charge is insensitive to these differences across a suite of
+   generators, tunes, and PDFs.
  - *Future*
    - Currently investigating jet-charge response as a function of p_T
    - Want to measure Q_{quark} vs. p_T in data

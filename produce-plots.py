@@ -15,11 +15,9 @@ SetAtlasStyle()
 ratioHistos = [
     ['QuarkJetPt','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
     ['ChargeSignPurity','Ratio of Right-Signed Charge-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
-    #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0]
 ]
 stackHistos =[
     ['GluonJetCharge','Truth-Gluon',False, kCyan-7,0.0],
-    #['QuarkJetCharge','Truth-Quark',False,kAzure-6,0.0],
     ["QuarkNegTwoThirds",'Truth-Q=-2/3',True,kYellow-7,0.0],
     ["QuarkNegOneThird",'Truth-Q=-1/3',True,kGreen-7,0.0],
     ["QuarkOneThird",'Truth-Q=1/3',True,kMagenta-7,0.0],
@@ -29,9 +27,11 @@ stackHistos =[
 canonHistos =[
     #['JetPt','Transverse momentum of all Jets;p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,1.0],
     #['JetEta','#eta distribution of Jets;#eta;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    #['QuarkJetPt','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
+    #['ChargeSignPurity','Ratio of Right-Signed Charge-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
     ['JetMult','Jet Multiplicity;n;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
     ['TruthDeltaR','#Delta R of truth parton to jet;sterad;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
-    #['WJetChargeK5',' Jet charge #times W charge  (Q_{j} Q_{W}) (k=0.5);e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
+    ['WJetChargeK5',' Jet charge #times W charge  (Q_{j} Q_{W}) (k=0.5);e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
     ['WJetChargeK3',' Jet charge #times W charge  (Q_{j} Q_{W}) (k=0.3);e^{2};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
     #['JetPullTheta',' Jet Pull #theta_{t} ;#theta_{t};#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
     #['JetPullMag',' Jet Pull Magnitude |t| ;|t|;#scale[0.8]{#int} f(x) dx #equiv 1 ',False,1.0],
@@ -61,14 +61,14 @@ def print_histo(canvas,hist,prefix):
     canvas.SetLogy(hist[2])
     canvas.Print(prefix + hist[0]+'.png')
     
-def process_gens(generators, histName, legend, stackHist):
+def process_gens(generators, histName, legend, stackHist,norm):
     legend.SetFillColor(0)
     legend.SetBorderSize(0)
     for gen in generators:
         #print "Getting ", histName, "from",gen[0]
         h = gen[-1].Get(histName)
-        if h.Integral() != 0:
-            h.Scale(1.0/h.Integral())
+        if h.Integral() != 0 and norm != 0:
+            h.Scale(norm/h.Integral())
         set_hist_opts(h,gen[2])
         stackHist.Add(h)
         legend.AddEntry(h,gen[1])
@@ -82,26 +82,27 @@ def print_canon_hists(outPrefix, generators):
             leg = TLegend(0.2,0.25,.45,0.55)
         else:
             leg = TLegend(0.72,0.65,.95,0.95)
-        process_gens(generators,histo[0],leg,hs)
+        process_gens(generators,histo[0],leg,hs,histo[3])
         print_histo(c,histo,outPrefix)
+def rebin_ratio_hists(generators,histList):
+    for histo in histList:
+        for gen in generators:
+            numHist = gen[-1].Get(histo)
+            numHist.Rebin(5)
+
 def print_ratio_hists(outPrefix,generators,histo,denHistName,sumDen):
     hs = THStack(histo[0],histo[1])
     c = TCanvas(histo[0],histo[1],800,600)
-    if histo[0]=='ChargeSignPurity':
-        leg = TLegend(0.72,0.65,.95,0.95)
-    else:
-        leg = TLegend(0.2,0.25,.45,0.45)
+    leg = TLegend(0.2,0.25,.45,0.45)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     for gen in generators:
         #print "Getting ", denHistName, "and", histo[0], "from", gen[1]
-        denHist = gen[-1].Get(denHistName)
         numHist = gen[-1].Get(histo[0])
+        denHist = gen[-1].Get(denHistName)
         if sumDen:
-            denHist.Add(numHist)
-        denHist.Rebin(5)
-        numHist.Rebin(5)
-        numHist.Divide(denHist)
+            denHist.Add(numHist,denHist)
+        numHist.Divide(numHist,denHist)
         set_hist_opts(numHist,gen[2])
         hs.Add(numHist)
         leg.AddEntry(numHist,gen[1])
@@ -123,11 +124,10 @@ for k in klist:
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     for histo in stackHistos:
-            
         h = boost_generators[2][-1].Get(histo[0]+k)
         set_hist_opts(h,histo[3]+3)
-        #h.SetFillColor(histo[3])
-        #h.SetFillStyle(1001)
+        h.SetFillColor(histo[3])
+        h.SetFillStyle(1001)
         hs.Add(h)
         leg.AddEntry(h,histo[1])
     total = boost_generators[2][-1].Get('WJetCharge'+k)
@@ -137,12 +137,14 @@ for k in klist:
     leg.Draw()
     c.RedrawAxis()
     c.Print(hs.GetName()+'.png')
+# Produce ratio plots
+rebin_ratio_hists(pythia_generators,['QuarkJetPt','GluonJetPt','ChargeSignPurity'])
+print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[1],'QuarkJetPt',False)
+print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[0],'GluonJetPt',True)
+
+rebin_ratio_hists(boost_generators,['QuarkJetPt','GluonJetPt','ChargeSignPurity'])
+print_ratio_hists('BOOST_',boost_generators,ratioHistos[1],'QuarkJetPt',False)
+print_ratio_hists('BOOST_',boost_generators,ratioHistos[0],'GluonJetPt',True)
 # Print the 'canonical' histograms
 print_canon_hists('BOOST_',boost_generators)
 print_canon_hists('PDFComparison_',pythia_generators)
-# Produce ratio plots
-print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[0],'GluonJetPt',True)
-print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[1],'QuarkJetPt',False)
-
-print_ratio_hists('BOOST_',boost_generators,ratioHistos[0],'GluonJetPt',True)
-print_ratio_hists('BOOST_',boost_generators,ratioHistos[1],'QuarkJetPt',False)

@@ -123,11 +123,11 @@ namespace Rivet {
     }
     virtual void fillChargeHistograms(const fastjet::PseudoJet& jet, const FastJets& JetProjection,
 				      const double k, const int wCharge,
-				      const double weight, const unsigned int pdgId){
+				      const double weight, const int pdgId){
       stringstream kStr; kStr<<"K"<<static_cast<int>(k*10);
       const double jetCharge = wCharge*JetProjection.JetCharge(jet,k,1*GeV);
       _histograms["WJetCharge"+kStr.str()]->fill(jetCharge,weight);
-      if(pdgId < 7) {
+      if(abs(pdgId) < 7) {
 	_histograms["QuarkJetCharge"+kStr.str()]->fill(jetCharge,weight);
 	switch(wCharge*PID::threeCharge(pdgId)){
 	case -2:
@@ -144,7 +144,7 @@ namespace Rivet {
 	  break;
 	}
       }
-      else if(pdgId  == 21){
+      else if(abs(pdgId)  == 21){
 	_histograms["GluonJetCharge"+kStr.str()]->fill(jetCharge,weight);
       }
       
@@ -240,7 +240,7 @@ namespace Rivet {
 							   p->momentum().e()));
 	    if(delR < 0.6 && truthParton->momentum().perp() < p->momentum().perp()) {
 	      truthDelR = delR;
-	      truthParton = p;
+	      //truthParton = p;
 	    }
 	  }
 	  _histograms["TruthDeltaR"]->fill(truthDelR,weight);
@@ -256,20 +256,20 @@ namespace Rivet {
 	      truthParton = p;
 	    }
 	  }
-	  unsigned int pdgId = abs(truthParton->pdg_id());
-	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 : pdgId, weight);
+	  const int pdgId = truthParton->pdg_id();
+	  _histograms["TruthPdgID"]->fill((abs(pdgId)==21) ? 0 : abs(pdgId), weight);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.3, static_cast<int>(wCharge), weight, pdgId);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.5, static_cast<int>(wCharge), weight, pdgId);
-	  if(pdgId < 7) {
+	  if(abs(pdgId) < 7) {
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
 	    if(wCharge*PID::charge(pdgId) < 0.0) {
 	      _histograms["ChargeSignPurity"]->fill(jets.front().pt(),weight);
 	    }
 	  }
-	  else if(pdgId  == 21){
+	  else if(abs(pdgId) == 21){
 	    _histograms["GluonJetPt"]->fill(jets.front().pt(),weight);
 	  }
-	}	      
+	}
       }
       else {
 	vetoEvent;
