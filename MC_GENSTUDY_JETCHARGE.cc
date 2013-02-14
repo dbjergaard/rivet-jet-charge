@@ -99,7 +99,7 @@ namespace Rivet {
       _histograms["JetPullMag"]         = bookHistogram1D("JetPullMag"          ,50,0,0.04);
       //_hist2DJetChargeWPt		= bookHistogram2D("JetChargeVsWPt"	,50,-0.3,0.3,50,24,300);
       _histograms["TruthDeltaR"]        = bookHistogram1D("TruthDeltaR"         ,50,0,0.7);
-      _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,14,-6.5,6.5);
+      _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,7,-0.5,6.5);
 
       //N-subjettiness histos	
       _histograms["JetMassFilt"]	= bookHistogram1D("JetMassFilt"		, 60, 0, 50);
@@ -266,7 +266,7 @@ namespace Rivet {
 	    }
 	  }
 	  const int pdgId = truthParton->pdg_id();
-	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 :pdgId, weight);
+	  _histograms["TruthPdgID"]->fill((abs(pdgId)==21) ? 0 :abs(pdgId), weight);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.3, static_cast<int>(wCharge), weight, pdgId);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.5, static_cast<int>(wCharge), weight, pdgId);
 	  if(abs(pdgId) < 7) {
