@@ -73,27 +73,25 @@ namespace Rivet {
       //Jet Charge Histos
       _histograms["WCharge"]		= bookHistogram1D("WCharge"		, 3, -1.5, 1.5);
 
-      _histograms["WJetChargeK5"]	= bookHistogram1D("WJetChargeK5"		, 50, -3, 3);
-      _histograms["QuarkJetChargeK5"]      = bookHistogram1D("QuarkJetChargeK5"	, 50, -3, 3);      
-      _histograms["GluonJetChargeK5"]      = bookHistogram1D("GluonJetChargeK5"	, 50, -3, 3);      
+      _histograms["WJetChargeK5"]	= bookHistogram1D("WJetChargeK5"	, 50, -3, 3);
+      _histograms["QuarkJetChargeK5"]	= bookHistogram1D("QuarkJetChargeK5"	, 50, -3, 3);      
+      _histograms["GluonJetChargeK5"]	= bookHistogram1D("GluonJetChargeK5"	, 50, -3, 3);      
 
-      _histograms["WJetChargeK3"]	= bookHistogram1D("WJetChargeK3"		, 50, -3, 3);
-      _histograms["QuarkJetChargeK3"]      = bookHistogram1D("QuarkJetChargeK3"	, 50, -3, 3);      
-      _histograms["GluonJetChargeK3"]      = bookHistogram1D("GluonJetChargeK3"	, 50, -3, 3);      
+      _histograms["WJetChargeK3"]	= bookHistogram1D("WJetChargeK3"	, 50, -3, 3);
+      _histograms["QuarkJetChargeK3"]	= bookHistogram1D("QuarkJetChargeK3"	, 50, -3, 3);      
+      _histograms["GluonJetChargeK3"]	= bookHistogram1D("GluonJetChargeK3"	, 50, -3, 3);      
 
-      _histograms["QuarkNegTwoThirdsK5"] = bookHistogram1D("QuarkNegTwoThirdsK5", 50, -3, 3);      
-      _histograms["QuarkNegOneThirdK5"] = bookHistogram1D("QuarkNegOneThirdK5", 50, -3, 3);      
-      _histograms["QuarkOneThirdK5"] = bookHistogram1D("QuarkOneThirdK5", 50, -3, 3);      
-      _histograms["QuarkTwoThirdsK5"] = bookHistogram1D("QuarkTwoThirdsK5", 50, -3, 3);      
+      _histograms["QuarkNegTwoThirdsK5"]= bookHistogram1D("QuarkNegTwoThirdsK5"	, 50, -3, 3);      
+      _histograms["QuarkNegOneThirdK5"]	= bookHistogram1D("QuarkNegOneThirdK5"	, 50, -3, 3);      
+      _histograms["QuarkOneThirdK5"]	= bookHistogram1D("QuarkOneThirdK5"	, 50, -3, 3);      
+      _histograms["QuarkTwoThirdsK5"]	= bookHistogram1D("QuarkTwoThirdsK5"	, 50, -3, 3);      
 
-      _histograms["QuarkNegTwoThirdsK3"] = bookHistogram1D("QuarkNegTwoThirdsK3", 50, -3, 3);      
-      _histograms["QuarkNegOneThirdK3"] = bookHistogram1D("QuarkNegOneThirdK3", 50, -3, 3);      
-      _histograms["QuarkOneThirdK3"] = bookHistogram1D("QuarkOneThirdK3", 50, -3, 3);      
-      _histograms["QuarkTwoThirdsK3"] = bookHistogram1D("QuarkTwoThirdsK3", 50, -3, 3);      
-
+      _histograms["QuarkNegTwoThirdsK3"]= bookHistogram1D("QuarkNegTwoThirdsK3"	, 50, -3, 3);      
+      _histograms["QuarkNegOneThirdK3"]	= bookHistogram1D("QuarkNegOneThirdK3"	, 50, -3, 3);      
+      _histograms["QuarkOneThirdK3"]	= bookHistogram1D("QuarkOneThirdK3"	, 50, -3, 3);      
+      _histograms["QuarkTwoThirdsK3"]	= bookHistogram1D("QuarkTwoThirdsK3"	, 50, -3, 3);
       
       _histograms["ChargeSignPurity"]   = bookHistogram1D("ChargeSignPurity"    ,50,33,300);
-
       _histograms["QuarkJetPt"]         = bookHistogram1D("QuarkJetPt"          ,50,33,300);
       _histograms["GluonJetPt"]         = bookHistogram1D("GluonJetPt"          ,50,33,300);
       
@@ -101,8 +99,7 @@ namespace Rivet {
       _histograms["JetPullMag"]         = bookHistogram1D("JetPullMag"          ,50,0,0.04);
       //_hist2DJetChargeWPt		= bookHistogram2D("JetChargeVsWPt"	,50,-0.3,0.3,50,24,300);
       _histograms["TruthDeltaR"]        = bookHistogram1D("TruthDeltaR"         ,50,0,0.7);
-      _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,7,-0.5,6.5);
-
+      _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,14,-6.5,6.5);
 
       //N-subjettiness histos	
       _histograms["JetMassFilt"]	= bookHistogram1D("JetMassFilt"		, 60, 0, 50);
@@ -229,35 +226,47 @@ namespace Rivet {
 	  if(tvec.first > 0) {
 	    _histograms["JetPullTheta"]->fill(tvec.second,weight);
 	  }
-	  HepMC::GenParticle* truthParton=particles(event.genEvent()).front();
+	  HepMC::GenParticle* truthParton=NULL;
 	  double truthDelR(0);
 	  foreach (HepMC::GenParticle* const p, particles(event.genEvent())) {
 	    if((p->pdg_id() != 21) and (abs(p->pdg_id()) > 6)) continue; 
 	    //This may be slow, but its the path of minimal obfuscation 
 	    const double delR = jets.front().delta_R(fastjet::PseudoJet(p->momentum().px(),
-							   p->momentum().py(),
-							   p->momentum().pz(),
-							   p->momentum().e()));
-	    if(delR < 0.6 && truthParton->momentum().perp() < p->momentum().perp()) {
+									p->momentum().py(),
+									p->momentum().pz(),
+									p->momentum().e()));
+	    if(truthParton==NULL){
 	      truthDelR = delR;
-	      //truthParton = p;
+	      truthParton = p;
+	    }
+	    else if(delR < 0.6 && truthParton->momentum().perp() < p->momentum().perp()){
+	      //if(null) assign truthParton, updateDelR
+	      truthDelR = delR;
+	      truthParton = p;
 	    }
 	  }
 	  _histograms["TruthDeltaR"]->fill(truthDelR,weight);
+	  truthParton = NULL;
 	  foreach (HepMC::GenParticle* const p, particles(event.genEvent())) {
+	    //if(null) assign truthParton, updateDelR
 	    if((p->pdg_id() != 21) and (abs(p->pdg_id()) > 6)) continue; 
 	    //This may be slow, but its the path of minimal obfuscation 
 	    const double delR = jets.front().delta_R(fastjet::PseudoJet(p->momentum().px(),
 							   p->momentum().py(),
 							   p->momentum().pz(),
 							   p->momentum().e()));
-	    if(delR < 0.4 && truthParton->momentum().perp() < p->momentum().perp()) {
+	    if(truthParton==NULL){
+	      truthDelR = delR;
+	      truthParton = p;
+	    }
+	    else if(delR < 0.4 && truthParton->momentum().perp() < p->momentum().perp()){
+	      //if(null) assign truthParton, updateDelR
 	      truthDelR = delR;
 	      truthParton = p;
 	    }
 	  }
 	  const int pdgId = truthParton->pdg_id();
-	  _histograms["TruthPdgID"]->fill((abs(pdgId)==21) ? 0 : abs(pdgId), weight);
+	  _histograms["TruthPdgID"]->fill((pdgId==21) ? 0 :pdgId, weight);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.3, static_cast<int>(wCharge), weight, pdgId);
 	  fillChargeHistograms(jets.front(), JetProjection, 0.5, static_cast<int>(wCharge), weight, pdgId);
 	  if(abs(pdgId) < 7) {
@@ -266,7 +275,7 @@ namespace Rivet {
 	      _histograms["ChargeSignPurity"]->fill(jets.front().pt(),weight);
 	    }
 	  }
-	  else if(abs(pdgId) == 21){
+	  else if(pdgId == 21){
 	    _histograms["GluonJetPt"]->fill(jets.front().pt(),weight);
 	  }
 	}
