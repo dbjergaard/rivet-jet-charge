@@ -100,6 +100,8 @@ namespace Rivet {
       //_hist2DJetChargeWPt		= bookHistogram2D("JetChargeVsWPt"	,50,-0.3,0.3,50,24,300);
       _histograms["TruthDeltaR"]        = bookHistogram1D("TruthDeltaR"         ,50,0,0.7);
       _histograms["TruthPdgID"]         = bookHistogram1D("TruthPdgID"          ,7,-0.5,6.5);
+      //Dipolarity 
+      _histograms["Dipolarity"]         =  bookHistogram1D("Dipolarity"          ,50,0.0,1.5);
 
       //N-subjettiness histos	
       _histograms["JetMassFilt"]	= bookHistogram1D("JetMassFilt"		, 60, 0, 50);
@@ -213,6 +215,7 @@ namespace Rivet {
 	  const double wCharge=PID::charge(muWFinder.bosons().front().pdgId());
 	  //const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
 	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
+	  _histograms["Dipolarity"]->fill(JetProjection.Dipolarity(jets.front()),weight);
 	  _histograms["JetMass"]->fill(jets.front().m(),weight);
 	  _histograms["JetPt"]->fill(jets.front().pt(),weight);	
 	  _histograms["JetE"]->fill(jets.front().E(),weight);

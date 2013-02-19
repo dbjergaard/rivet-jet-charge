@@ -18,10 +18,10 @@ ratioHistos = [
 ]
 stackHistos =[
     ['GluonJetCharge','Truth-Gluon',False, kCyan-7,0.0],
-    ["QuarkNegTwoThirds",'Truth-Q=-2/3',True,kYellow-7,0.0],
-    ["QuarkNegOneThird",'Truth-Q=-1/3',True,kGreen-7,0.0],
-    ["QuarkOneThird",'Truth-Q=1/3',True,kMagenta-7,0.0],
-    ["QuarkTwoThirds",'Truth-Q=2/3',True,kBlue-7,0.0],
+    ["QuarkNegTwoThirds",'Truth-qQ=-2/3',True,kYellow-7,0.0],
+    ["QuarkNegOneThird",'Truth-qQ=-1/3',True,kGreen-7,0.0],
+    ["QuarkOneThird",'Truth-qQ=1/3',True,kMagenta-7,0.0],
+    ["QuarkTwoThirds",'Truth-qQ=2/3',True,kBlue-7,0.0],
     #['WJetCharge','Measured Charge',False,kRed+3,0.0]
 ]
 canonHistos =[
