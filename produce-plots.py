@@ -14,6 +14,7 @@ SetAtlasStyle()
 
 ratioHistos = [
     ['QuarkJetPt','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
+    ['QuarkJetEta','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
     ['ChargeSignPurity','Ratio of Right-Signed Charge-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
 ]
 stackHistos =[
@@ -142,11 +143,13 @@ for k in klist:
     c.Print(hs.GetName()+'.png')
 # Produce ratio plots
 rebin_ratio_hists(pythia_generators,['QuarkJetPt','GluonJetPt','ChargeSignPurity'])
-print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[1],'QuarkJetPt',False)
+print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[2],'QuarkJetPt',False)
+print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[1],'GluonJetEta',True)
 print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[0],'GluonJetPt',True)
 
 rebin_ratio_hists(boost_generators,['QuarkJetPt','GluonJetPt','ChargeSignPurity'])
-print_ratio_hists('BOOST_',boost_generators,ratioHistos[1],'QuarkJetPt',False)
+print_ratio_hists('BOOST_',boost_generators,ratioHistos[2],'QuarkJetPt',False)
+print_ratio_hists('BOOST_',boost_generators,ratioHistos[1],'GluonJetEta',True)
 print_ratio_hists('BOOST_',boost_generators,ratioHistos[0],'GluonJetPt',True)
 # Print the 'canonical' histograms
 print_canon_hists('BOOST_',boost_generators)

@@ -92,6 +92,8 @@ namespace Rivet {
       _histograms["QuarkTwoThirdsK3"]	= bookHistogram1D("QuarkTwoThirdsK3"	, 50, -3, 3);
       
       _histograms["ChargeSignPurity"]   = bookHistogram1D("ChargeSignPurity"    ,50,33,300);
+      _histograms["QuarkJetEta"]	= bookHistogram1D("QuarkJetEta"		, 25, -2, 2);
+      _histograms["GluonJetEta"]	= bookHistogram1D("GluonJetEta"		, 25, -2, 2);
       _histograms["QuarkJetPt"]         = bookHistogram1D("QuarkJetPt"          ,50,33,300);
       _histograms["GluonJetPt"]         = bookHistogram1D("GluonJetPt"          ,50,33,300);
       
@@ -274,12 +276,14 @@ namespace Rivet {
 	  fillChargeHistograms(jets.front(), JetProjection, 0.5, static_cast<int>(wCharge), weight, pdgId);
 	  if(abs(pdgId) < 7) {
 	    _histograms["QuarkJetPt"]->fill(jets.front().pt(),weight);
+	    _histograms["QuarkJetEta"]->fill(jets.front().eta(),weight);
 	    if(wCharge*PID::charge(pdgId) < 0.0) {
 	      _histograms["ChargeSignPurity"]->fill(jets.front().pt(),weight);
 	    }
 	  }
 	  else if(pdgId == 21){
 	    _histograms["GluonJetPt"]->fill(jets.front().pt(),weight);
+	    _histograms["GluonJetEta"]->fill(jets.front().eta(),weight);
 	  }
 	}
       }
