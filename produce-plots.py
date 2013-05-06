@@ -14,7 +14,7 @@ SetAtlasStyle()
 
 ratioHistos = [
     ['QuarkJetPt','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
-    ['QuarkJetEta','Quark-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
+    ['QuarkJetEta','Quark-#eta vs total #eta;#eta;#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
     ['ChargeSignPurity','Ratio of Right-Signed Charge-p_{T} vs total p_{T};p_{T} [GeV];#scale[0.8]{#int} f(x) dx #equiv 1',False,0.0],
 ]
 stackHistos =[
@@ -60,6 +60,7 @@ def set_hist_opts(hist, color):
 def print_histo(canvas,hist,prefix):
     canvas.RedrawAxis()
     canvas.SetLogy(hist[2])
+    canvas.Print(prefix + hist[0]+'.eps')
     canvas.Print(prefix + hist[0]+'.png')
     
 def process_gens(generators, histName, legend, stackHist,norm):
@@ -141,6 +142,7 @@ for k in klist:
     leg.Draw()
     c.RedrawAxis()
     c.Print(hs.GetName()+'.png')
+    c.Print(hs.GetName()+'.eps')
 # Produce ratio plots
 rebin_ratio_hists(pythia_generators,['QuarkJetPt','GluonJetPt','ChargeSignPurity'])
 print_ratio_hists('PDFComparison_',pythia_generators,ratioHistos[2],'QuarkJetPt',False)

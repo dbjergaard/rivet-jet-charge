@@ -3,6 +3,9 @@
 #include <map>
 #include <algorithm>
 
+// BOOST 2012 Substructure methods
+#include "BOOSTFastJets.h"
+
 //Generator Interfaces
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenEvent.h"
@@ -49,7 +52,6 @@ namespace Rivet {
       addProjection(muWFinder,"muWFinder");
       FastJets JetProjection(muWFinder.remainingFinalState(),FastJets::ANTIKT, 0.6); //FastJets::KT,0.7
       addProjection(JetProjection,"Jets");
-
       ///////////////
       // Histograms
       ///////////////
@@ -126,7 +128,7 @@ namespace Rivet {
 				      const double k, const int wCharge,
 				      const double weight, const int pdgId){
       stringstream kStr; kStr<<"K"<<static_cast<int>(k*10);
-      const double jetCharge = wCharge*JetProjection.JetCharge(jet,k,1*GeV);
+      const double jetCharge = wCharge*JetCharge(JetProjection,jet,k,1*GeV);
       _histograms["WJetCharge"+kStr.str()]->fill(jetCharge,weight);
       if(abs(pdgId) < 7) {
 	_histograms["QuarkJetCharge"+kStr.str()]->fill(jetCharge,weight);
@@ -184,11 +186,10 @@ namespace Rivet {
       if (muWFinder.bosons().size() != 1)
 	vetoEvent;
       _nPassing[1]++;
-
+      //Dipolarity(0.,0.);
       const double weight = event.weight();
-      const FastJets& JetProjection = applyProjection<FastJets>(event, "Jets");
+      const FastJets& JetProjection=applyProjection<FastJets>(event, "Jets"); 
       const PseudoJets& jets = JetProjection.pseudoJetsByPt(35.0*GeV);
-
       if (jets.size() > 0) {
 	_nPassing[2]++;
 	const unsigned int jetMult=jets.size();
@@ -200,24 +201,24 @@ namespace Rivet {
 	    analyzeSubJets(jets.front(),weight);
 
 	  foreach (const fastjet::PseudoJet& jet, jets) {
-	    _histograms["JetMassFilt"]->fill(JetProjection.Filter(jet, FastJets::CAM, 3, 0.3).m(), weight);
-	    _histograms["JetMassTrim"]->fill(JetProjection.Trimmer(jet, FastJets::CAM, 0.03, 0.3).m(), weight);
-	    _histograms["JetMassPrune"]->fill(JetProjection.Pruner(jet, FastJets::CAM, 0.4, 0.1).m(), weight);
+	    _histograms["JetMassFilt"]->fill(Filter(JetProjection.clusterSeq(),jet, FastJets::CAM, 3, 0.3).m(), weight);
+	    _histograms["JetMassTrim"]->fill(Trimmer(JetProjection.clusterSeq(),jet, FastJets::CAM, 0.03, 0.3).m(), weight);
+	    _histograms["JetMassPrune"]->fill(BOOSTPruner(JetProjection.clusterSeq(),jet, FastJets::CAM, 0.4, 0.1).m(), weight);
 	    PseudoJets constituents = jet.constituents();
 	    if (constituents.size() > 10) {
-	      PseudoJets axes(JetProjection.GetAxes(2, constituents, FastJets::CAM, 0.5));
-	      _histograms["NSubJettiness"]->fill(JetProjection.TauValue(2, 1, constituents, axes), weight);
-	      JetProjection.UpdateAxes(2, constituents, axes);
-	      _histograms["NSubJettiness1Iter"]->fill(JetProjection.TauValue(2, 1, constituents, axes), weight);
-	      JetProjection.UpdateAxes(2, constituents, axes);
-	      _histograms["NSubJettiness2Iter"]->fill(JetProjection.TauValue(2, 1, constituents, axes), weight);
+	      PseudoJets axes(GetAxes(JetProjection.clusterSeq(), 2, constituents, FastJets::CAM, 0.5));
+	      _histograms["NSubJettiness"]->fill(TauValue(2, 1, constituents, axes), weight);
+	      UpdateAxes(2, constituents, axes);
+	      _histograms["NSubJettiness1Iter"]->fill(TauValue(2, 1, constituents, axes), weight);
+	      UpdateAxes(2, constituents, axes);
+	      _histograms["NSubJettiness2Iter"]->fill(TauValue(2, 1, constituents, axes), weight);
 	    }
 	  }
 	  _nPassing[3]++;
 	  const double wCharge=PID::charge(muWFinder.bosons().front().pdgId());
 	  //const double jetCharge=wCharge*JetProjection.JetCharge(jets.front(),0.5,1*GeV);
-	  const std::pair<double,double> tvec=JetProjection.JetPull(jets.front());
-	  _histograms["Dipolarity"]->fill(JetProjection.Dipolarity(jets.front()),weight);
+	  const std::pair<double,double> tvec=JetPull(JetProjection,jets.front());
+	  _histograms["Dipolarity"]->fill(Dipolarity(jets.front()),weight);
 	  _histograms["JetMass"]->fill(jets.front().m(),weight);
 	  _histograms["JetPt"]->fill(jets.front().pt(),weight);	
 	  _histograms["JetE"]->fill(jets.front().E(),weight);

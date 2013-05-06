@@ -2,10 +2,11 @@
 #include "Rivet/Tools/ParticleIdUtils.hh"
 #include "fastjet/tools/Filter.hh"
 #include "fastjet/tools/Pruner.hh"
+#include "Rivet/Tools/Logging.hh"
 
 namespace Rivet{
   /// D===1/R_{12} \Sum_{i\in J} p_{Ti}/p_{TJ} R_i
-  double BOOSTFastJets::Dipolarity(const fastjet::PseudoJet &j) const {
+  double Dipolarity(const fastjet::PseudoJet &j){
     fastjet::PseudoJet jet1,jet2;
     if (not (j.has_parents(jet1,jet2))) return -1;//not ideal axes                                                                                          
     double dipolarity(0.0);
@@ -25,13 +26,13 @@ namespace Rivet{
       vy = mapAngleMPiToPi(c.phi()-jet1.phi());
       project = vx*deta + vy*dphi;
       if (((project > 0) && (project < dmag))) { //nearest distance to segment is perp. projection
-  	dipolarity += pt * pow(vx*dphi - vy*deta,2);
+	dipolarity += pt * pow(vx*dphi - vy*deta,2);
       } else {
-  	if (project > 0) { //closer to jet2, so move the origin                                                                                             
-  	  vx = c.eta() - jet2.eta();
-  	  vy = mapAngleMPiToPi(c.phi()-jet2.phi());
-  	}
-  	dipolarity += pt * (vx*vx + vy*vy);  //nearest distance is radial vector to origin                                                                  
+	if (project > 0) { //closer to jet2, so move the origin                                                                                             
+	  vx = c.eta() - jet2.eta();
+	  vy = mapAngleMPiToPi(c.phi()-jet2.phi());
+	}
+	dipolarity += pt * (vx*vx + vy*vy);  //nearest distance is radial vector to origin                                                                  
       }
     }//constit loop                                                                                                                                         
     if (sumpt < 1e-3) return -1;
@@ -39,101 +40,89 @@ namespace Rivet{
   }
 
   ///\vec{t} ===\Sum_{i\in J} |r_i|p_{Ti}/p_{TJ}\vec{r_i}
-  std::pair<double,double> BOOSTFastJets::JetPull(const fastjet::PseudoJet &j, const double ptmin) const {
-    assert(clusterSeq());
-    const PseudoJets parts = clusterSeq()->constituents(j);
+  std::pair<double,double> JetPull(const FastJets& jetProjection, const fastjet::PseudoJet &j, const double ptmin){
+    assert(jetProjection.clusterSeq());
+    const PseudoJets parts = jetProjection.clusterSeq()->constituents(j);
     const double jetRap = j.rapidity(), jetPhi = j.phi();
     double ty=0, tphi=0, tmag=0, ttheta=0, dphi=0;
     if(parts.size() > 1) {
       foreach (const fastjet::PseudoJet& p, parts) {
-  	dphi = mapAngleMPiToPi(p.phi()-jetPhi); //don't generate a large pull for jets at 2pi
-  	if(p.pt() > ptmin) { //pt always > 0, if the user hasn't defined a cut, this will always pass
-  	  double ptTimesRmag=sqrt(pow(p.rapidity()-jetRap,2) + pow(dphi,2))*p.pt();//use dphi
-  	  ty+=ptTimesRmag*(p.rapidity()-jetRap);
-  	  tphi+=ptTimesRmag*(dphi);//use dphi
-  	}
+	dphi = mapAngleMPiToPi(p.phi()-jetPhi); //don't generate a large pull for jets at 2pi
+	if(p.pt() > ptmin) { //pt always > 0, if the user hasn't defined a cut, this will always pass
+	  double ptTimesRmag=sqrt(pow(p.rapidity()-jetRap,2) + pow(dphi,2))*p.pt();//use dphi
+	  ty+=ptTimesRmag*(p.rapidity()-jetRap);
+	  tphi+=ptTimesRmag*(dphi);//use dphi
+	}
       }
       //now parametrize \vec{t}=|t|(cos(\theta_t),sin(\theta_t))
       tmag=sqrt(pow(ty,2) + pow(tphi,2))/j.pt();
       if(tmag>0) {
-  	ttheta=atan2(tphi,ty);
+	ttheta=atan2(tphi,ty);
       }
-      else {
-  	MSG_ERROR("Couldn't calculate ttheta, tphi:"<<tphi<<" ty:"<<ty);
-      }
-      //TODO: REMOVE MSG_ERRORs for final code
-      //I know this is not the correct channel, but DEBUG is swamped
-      //by stuff I'm not interested in...
       if(tmag > 0.08 ) {
-  	MSG_ERROR("Pull Overflow: tmag: "<<tmag<<" ttheta: "<<ttheta<<" tphi: "<<tphi<<" ty: "<<ty);
-  	tmag=-1.0;
+	tmag=-1.0;
       }
-    }
-    else {
-      MSG_ERROR("Found jet with only one constituent, returning tmag: "<<tmag<<", ttheta: "<<ttheta);
     }
     return std::pair<double,double>(tmag,ttheta);
   }
 
   ///Q===\Sum_{i\in J} q_i*p_{Ti}^k/p_{TJ} 
-  double BOOSTFastJets::JetCharge(const fastjet::PseudoJet &j, const double k, const double ptmin) const {
-    assert(clusterSeq());
-    const PseudoJets parts = clusterSeq()->constituents(j);
+  double JetCharge(const FastJets& jetProjection, const fastjet::PseudoJet &j, const double k, const double ptmin) {
+    assert(jetProjection.clusterSeq());
+    const PseudoJets parts = jetProjection.clusterSeq()->constituents(j);
     double q(0);
     foreach (const fastjet::PseudoJet& p, parts) {
-      map<int, Particle>::const_iterator found = _particles.find(p.user_index());
-      assert(found != _particles.end());
+      map<int, Particle>::const_iterator found = jetProjection.particles().find(p.user_index());
+      assert(found != jetProjection.particles().end());
       if(p.pt() < ptmin) continue; //pt always > 0, if the user hasn't defined a cut, this will always pass
       q += PID::charge(found->second) * pow(p.pt(),k);       
     }
     return q/pow(j.pt(),k);
   }
 
-  fastjet::JetAlgorithm BOOSTFastJets::setJetAlgorithm(JetAlgName subJetAlgorithm) const
+  fastjet::JetAlgorithm setJetAlgorithm(FastJets::JetAlgName subJetAlgorithm) 
   {
     //Do we want to support all enums? This is only a subset...
-    switch(subJetAlgorithm)
-      {
-      case KT:
-  	return fastjet::kt_algorithm;
-      case ANTIKT:
-  	return fastjet::antikt_algorithm;
-      case CAM:
-  	return fastjet::cambridge_algorithm;
-      case DURHAM:
-  	return fastjet::ee_kt_algorithm;
-      default: 
-  	MSG_ERROR("No plugin jet algorithms accepted for Filter! Prepare to die!");
-  	return fastjet::undefined_jet_algorithm;
-      }
+    switch(subJetAlgorithm) {
+    case FastJets::KT:
+      return fastjet::kt_algorithm;
+    case FastJets::ANTIKT:
+      return fastjet::antikt_algorithm;
+    case FastJets::CAM:
+      return fastjet::cambridge_algorithm;
+    case FastJets::DURHAM:
+      return fastjet::ee_kt_algorithm;
+    default: 
+      return fastjet::undefined_jet_algorithm;
+    }
   }
   
-  fastjet::PseudoJet BOOSTFastJets::Filter(fastjet::PseudoJet jet, JetAlgName subjet_def, 
-  				      int hardest,double subjet_R=0.3) const {
-    assert(clusterSeq());
+  fastjet::PseudoJet Filter(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
+			    int hardest,double subjet_R=0.3)  {
+    assert(clusterSeq);
     //sanity check on the jet
-    if (jet.E() <= 0.0 || clusterSeq()->constituents(jet).size() == 0) {
+    if (jet.E() <= 0.0 || clusterSeq->constituents(jet).size() == 0) {
       return jet;
     }
     fastjet::Filter filter(fastjet::JetDefinition(setJetAlgorithm(subjet_def), subjet_R), fastjet::SelectorNHardest(hardest));
     return filter(jet);
   }
 
-  fastjet::PseudoJet BOOSTFastJets::Trimmer(fastjet::PseudoJet jet, JetAlgName subjet_def, 
-  				       double percentage, double subjet_R=0.3) const {
-    assert(clusterSeq());
+  fastjet::PseudoJet Trimmer(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
+			     double percentage, double subjet_R=0.3) {
+    assert(clusterSeq);
     //sanity check on the jet
-    if (jet.E() <= 0.0 || clusterSeq()->constituents(jet).size() == 0) {
+    if (jet.E() <= 0.0 || clusterSeq->constituents(jet).size() == 0) {
       return jet;
     }
     fastjet::Filter filter(fastjet::JetDefinition(setJetAlgorithm(subjet_def), subjet_R), fastjet::SelectorPtFractionMin(percentage));
     return filter(jet);
   }
-  fastjet::PseudoJet BOOSTFastJets::Pruner(fastjet::PseudoJet jet, JetAlgName subjet_def, 
-  				      double zcut=0.1, double Rcut_factor=0.5) const {
+  fastjet::PseudoJet BOOSTPruner(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
+			    double zcut=0.1, double Rcut_factor=0.5) {
     //sanity check on the jet
-    assert(clusterSeq());
-    if (jet.E() <= 0.0 || clusterSeq()->constituents(jet).size() == 0) {
+    assert(clusterSeq);
+    if (jet.E() <= 0.0 || clusterSeq->constituents(jet).size() == 0) {
       return jet;
     }
     //NOTE: Pruner sets the jet algorithm R to the maximum allowed, so setting it
@@ -143,9 +132,9 @@ namespace Rivet{
     return pruner(jet);
   }
 
-  PseudoJets BOOSTFastJets::GetAxes(unsigned int n_jets, 
-  			       PseudoJets& inputJets, JetAlgName subjet_def, double subR) const {
-    assert(clusterSeq());
+  PseudoJets GetAxes(const fastjet::ClusterSequence* clusterSeq, unsigned int n_jets, 
+		     PseudoJets& inputJets, FastJets::JetAlgName subjet_def, double subR) {
+      assert(clusterSeq);
     //sanity check
     if (inputJets.size() < n_jets) {
       std::cout << "Not enough input particles." << endl;
@@ -156,58 +145,44 @@ namespace Rivet{
     return sub_clust_seq.exclusive_jets((signed)n_jets);
   }
 
-  double BOOSTFastJets::TauValue(double beta, double jet_rad, 
-  			    PseudoJets& particles, PseudoJets& axes) const {
-
+  double TauValue(double beta, double jet_rad, 
+		  PseudoJets& particles, PseudoJets& axes) {
     double tauNum = 0.0;
     double tauDen = 0.0;
-
     if(particles.size() == 0)return 0.0;
-   
     for (unsigned int i = 0; i < particles.size(); i++) {
-
       // find minimum distance (set R large to begin)
-
       double minR = 10000.0;
       for (unsigned int j = 0; j < axes.size(); j++) {
-  	double tempR = sqrt(particles[i].squared_distance(axes[j]));
-  	if (tempR < minR) minR = tempR;
+	double tempR = sqrt(particles[i].squared_distance(axes[j]));
+	if (tempR < minR) minR = tempR;
       }
-
       //calculate nominator and denominator
-      
       tauNum += particles[i].perp() * pow(minR,beta);
       tauDen += particles[i].perp() * pow(jet_rad,beta);
     }
-	
     //return N-subjettiness
-
     return tauNum/tauDen;
   }
 
-  void BOOSTFastJets::UpdateAxes(double beta,
-  			    PseudoJets& particles, PseudoJets& axes) const {
-
+  void UpdateAxes(double beta,
+		  PseudoJets& particles, PseudoJets& axes) {
     vector<int> belongsto;
     //no reason not to use foreach here
     for (unsigned int i = 0; i < particles.size(); i++) {
-
       // find minimum distance axis
-
       int assign = 0;
       double minR = 10000.0;
       for (unsigned int j = 0; j < axes.size(); j++) {
-  	double tempR = sqrt(particles[i].squared_distance(axes[j]));
-  	if (tempR < minR) {
-  	  minR = tempR;
-  	  assign = j;
-  	}
+	double tempR = sqrt(particles[i].squared_distance(axes[j]));
+	if (tempR < minR) {
+	  minR = tempR;
+	  assign = j;
+	}
       }
       belongsto.push_back(assign);
     }
-
     // iterative step
-    
     double deltaR2, distphi;
     vector<double> ynom, phinom, den;
     ynom.resize(axes.size());
@@ -235,67 +210,53 @@ namespace Rivet{
 
       if (fuzzyEquals(den[j], 0.,1e-9)) axes.at(j) = axes[j];
       else {
-  	axes.at(j).reset_momentum_PtYPhiM(axes[j].perp(), ynom[j] / den[j], fmod( 2*M_PI + (phinom[j] / den[j]), 2*M_PI ), axes[j].perp()/2);
+	axes.at(j).reset_momentum_PtYPhiM(axes[j].perp(), ynom[j] / den[j], fmod( 2*M_PI + (phinom[j] / den[j]), 2*M_PI ), axes[j].perp()/2);
       }
     }
   }
 
-  double BOOSTFastJets::KeyColToRight(int p, vector<ACFpeak> peaks, vector<double> ASF_erf) const {
-
+  double KeyColToRight(int p, vector<ACFpeak> peaks, vector<double> ASF_erf) {
     int higherpeak = -1;
     double height = peaks[p].height;
     double keycol = height;
-
     for (unsigned int k = p+1; k < peaks.size(); k++){
-
       if (peaks[k].height > height) { higherpeak = k; break; }
     }
-
     if (higherpeak != -1){
 
       int startindex = peaks[p].index;
       int endindex = peaks[higherpeak].index;
       for (int j = startindex+1; j < endindex; j++){
-
-        if (ASF_erf[j] < keycol) keycol = ASF_erf[j];
+	if (ASF_erf[j] < keycol) keycol = ASF_erf[j];
       }
     }
     else keycol = 0.;
-
     return keycol;
   }
 
-  double BOOSTFastJets::KeyColToLeft(int p, vector<ACFpeak> peaks, vector<double> ASF_erf) const {
-
+  double KeyColToLeft(int p, vector<ACFpeak> peaks, vector<double> ASF_erf) {
     int higherpeak = -1;
     double height = peaks[p].height;
     double keycol = height;
-
     for (int k = p-1; k >= 0; k--){
 
       if (peaks[k].height > height) { higherpeak = k; break; }
     }
-
     if (higherpeak != -1){
-
       int endindex = peaks[p].index;
       int startindex = peaks[higherpeak].index;
       for (int j = startindex+1; j < endindex; j++){
-
-        if (ASF_erf[j] < keycol) keycol = ASF_erf[j];
+	if (ASF_erf[j] < keycol) keycol = ASF_erf[j];
       }
     }
     else keycol = 0.;
-
     return keycol;
   }
   
-  vector<BOOSTFastJets::ACFpeak> BOOSTFastJets::ASFPeaks(PseudoJets& particles,
-					  unsigned int most_prominent, double minprominence) const {
-
+  vector<ACFpeak> ASFPeaks(PseudoJets& particles,
+			   unsigned int most_prominent, double minprominence) {
     unsigned int meshsize = 500;
     double sigma = 0.06;
-
     vector<ACFpeak> peaks;
 
     //sanity check
@@ -303,19 +264,18 @@ namespace Rivet{
       cout << "Not enough particles in jet for ACF." << endl;
       return peaks;
     }
-
     //pair all particles up
     vector<ACFparticlepair> pairs;
     ACFparticlepair dummy;
     for(unsigned int k = 0; k < particles.size(); k++) {
       for(unsigned int j = 0; j < k; j++) {
-  	double phidist = abs(particles[k].phi_std() - particles[j].phi_std());
-  	if( phidist > M_PI ) phidist = 2 * M_PI - phidist;
-        //dummy.deltaR = sqrt( pow(particles[k].pseudorapidity() - particles[j].pseudorapidity(), 2) +
-  	//	pow(phidist, 2) );
-  	dummy.deltaR = sqrt(particles[k].plain_distance(particles[j]));
-  	dummy.weight = particles[k].perp() * particles[j].perp() * dummy.deltaR * dummy.deltaR;
-  	pairs.push_back(dummy);
+	double phidist = abs(particles[k].phi_std() - particles[j].phi_std());
+	if( phidist > M_PI ) phidist = 2 * M_PI - phidist;
+	//dummy.deltaR = sqrt( pow(particles[k].pseudorapidity() - particles[j].pseudorapidity(), 2) +
+	//	pow(phidist, 2) );
+	dummy.deltaR = sqrt(particles[k].plain_distance(particles[j]));
+	dummy.weight = particles[k].perp() * particles[j].perp() * dummy.deltaR * dummy.deltaR;
+	pairs.push_back(dummy);
       }
     }
 
@@ -349,17 +309,17 @@ namespace Rivet{
 
       //Loop on pairs.
       for (unsigned int j = 0; j < pairs.size(); j++){
-  	//ACF-Add pairs within mesh's deltaR.
-  	if (pairs[j].deltaR <= rVal) fVal += pairs[j].weight;
+	//ACF-Add pairs within mesh's deltaR.
+	if (pairs[j].deltaR <= rVal) fVal += pairs[j].weight;
 
-  	//Smoothing function argument
-  	xArg = (double)(rVal-pairs[j].deltaR)/sigma;
+	//Smoothing function argument
+	xArg = (double)(rVal-pairs[j].deltaR)/sigma;
 
-  	//ASF Error Function Denominator: Add pairs weighted by Erf values.
-  	eVal += (double)pairs[j].weight*0.5*(1.0+erf(xArg));
+	//ASF Error Function Denominator: Add pairs weighted by Erf values.
+	eVal += (double)pairs[j].weight*0.5*(1.0+erf(xArg));
 
-  	//ASF Gaussian Numerator: Add pairs weight by Gaussian values.
-  	gVal += (double)pairs[j].weight * (exp( -pow ((abs(xArg)),2.0)));
+	//ASF Gaussian Numerator: Add pairs weight by Gaussian values.
+	gVal += (double)pairs[j].weight * (exp( -pow ((abs(xArg)),2.0)));
 
       }//end pair loop
       ACF[k] = fVal;
@@ -383,7 +343,7 @@ namespace Rivet{
       //Compute simple (spiked) ASF
       if (ACF[k-1] == 0.) {ASF[k] = 0.;}
       else if (k < meshsize - 2) 
-        {ASF[k] = (log(ACF[k+1]) - log(jetmass*ACF[k-1]))/(log(Rvals[k+1]) - log(Rvals[k-1]));}
+	{ASF[k] = (log(ACF[k+1]) - log(jetmass*ACF[k-1]))/(log(Rvals[k+1]) - log(Rvals[k-1]));}
 
       //Compute gaussian (smoothed) ASF
       ASF_erf[k] = (fuzzyEquals(erf_denom[k],0.,1e-9)) ? 0. : ASF_gauss[k]/erf_denom[k];
@@ -396,37 +356,28 @@ namespace Rivet{
     }//end mesh loop
 
     ACFpeak myPeak;
-
     double lefth =  0.;
     double height = 0.;
     double righth = 0.;
 
     for (unsigned int k = 1; k < meshsize-1; k++) {
-
       lefth  = ASF_erf[k-1];
       height = ASF_erf[k];
       righth = ASF_erf[k+1];
-
       //Found a peak?
       if (lefth < height && height > righth) {
-
-  	myPeak.height = height;
-  	myPeak.Rval   = Rvals[k];
+	myPeak.height = height;
+	myPeak.Rval   = Rvals[k];
 	myPeak.index  = k;
-
 	//Peaks are stored according to
 	//index (equilvalent to R values)
 	//from lowest to highest
 	peaks.push_back(myPeak);
       }
-
     }
-
     //Partial mass of peak
     for (unsigned int p = 0; p < peaks.size(); p++)peaks[p].partialmass = (double)sqrt(gauss_peak[peaks[p].index]);
-
     //peaks[p].partialmass = (double)sqrt(sqrt(M_PI)*sigma*peaks[p].height*ACF[peaks[p].index]*jetmass/peaks[p].Rval);
-
     //Prominence of peak
     for (unsigned int k = 0; k < peaks.size(); k++){
       double height = peaks[k].height;
@@ -435,12 +386,10 @@ namespace Rivet{
       if (leftdescent < rightdescent) peaks[k].prominence = leftdescent;
       else peaks[k].prominence = rightdescent;
     }
-
     //return all peaks
     if(most_prominent == 0 && fuzzyEquals(minprominence, 0.,1e-9) ) {
       return peaks;
     }
-
     //return all peaks over given prominence
     else if(most_prominent == 0) {
       vector<ACFpeak> dummyp;
