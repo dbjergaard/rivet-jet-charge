@@ -1,4 +1,15 @@
 # Rivet Jet Substructure Study
+## Obtaining and running
+1. Clone this repository
+```git clone https://github.com/dbjergaard/rivet-jet-charge.git```
+2. Setup rivet with 'source rivet-env.sh'
+3. Patch FastJets to include particles() method, recompile FastJets
+```sh 
+   patch  ~/rivet/build/rivet/include/Rivet/Projections/FastJets.hh < BOOSTFastJets.patch
+   cd ~/rivet/build/rivet && make -j 4 && make install && cd -
+```
+4. Run 'make' in the repo directory
+5. Have fun looking at substructure histograms!
 
 ## Physics Motivation
 The big picture aim of this study is to provide an accurate picture of
@@ -7,17 +18,14 @@ order to fully assess different generators, we must extract as much
 information as possible from the jets.
 ## Implemented theoreticals
 ### Jet Charge
-Jet Charge is defined as
-$$
-Q_{\kappa}^i = \frac{1}{(P_T^{jet})^\kappa}\sum_{j\in jet}Q_j(p_T^j)^\kappa
-$$
-Put in words, its the sum of the charge of the constituent particles
+Jet Charge is defined as the sum of the charge of the constituent particles
 weighted by the particle's transverse momentum. 
 ### Jet Dipolarity
 Jet dipolarity is a p_T weighted sum over the radii of sub*jets. It is
 typically only defined for jets with two subjets. 
-
-
+### Jet Pull
+### Angular Correlation Functions
+### Pruning, Filtering, Trimming
 ## Analysis Cuts
 ### W boson selection
 * The W finder projection is configured as 
@@ -47,76 +55,3 @@ clusterPhotons is true, trackPhotons is false
    * Invariant mass of all subjets
    * Dipolarity of jet with two subjets
    * Charge of jet
-## Pythia generator results for W production
-
-    |--------------------------+-------------+--------+------------|
-    | Subprocess               | # of points |        | Sigma (mb) |
-    |--------------------------+-------------+--------+------------|
-    |                          |   Generated |  Tried |            |
-    |--------------------------+-------------+--------+------------|
-    | 0 Inclusive              |       50000 | 593829 |   1.475e-4 |
-    | 16 f + fbar' -> g + W\pm |       29847 | 408870 |   8.814e-5 |
-    | 31 f + g -> f' +  W\pm   |       20153 | 184959 |   5.937e-5 |
-    |--------------------------+-------------+--------+------------|
-
-
-
-# Working notes (dirty and unorganized)
-Here's the issue: As you said before, I need to recluster the jets
-according to kt 0.6 in order to extract sensible subjets.  I do this
-with the line:
-
-    PseudoJets constituents=jet.validated_cs()*>constituents(jet);
-    fastjet::ClusterSequence clusterSeq(constituents,fastjet::JetDefinition(fastjet::kt_algorithm,0.6)); 
-    PseudoJets subJets=clusterSeq.exclusive_subjets_up_to(jet,3);
-
-The issue is when clusterSeq.exlcusive_subjets_up_to(jet,3); is called.
-In the class ClusterSequence, an assertion is made that the clusterSeq
-is associated with the jet.  This fails when the code runs as:
-
-    python: ClusterSequence.cc:984: void fastjet::ClusterSequence::get_subhist_set(std::set<const fastjet::ClusterSequence::history_element#>&, const fastjet::PseudoJet&, double, int) const: Assertion `contains(jet)' failed.
-
-Which after reading the code leads to this definition of 'contains()':
-    //**********************************************************************
-    // returns true if the cluster sequence contains this jet (i.e. jet's
-    // structure is this cluster sequence's and the cluster history index
-    // is in a consistent range)
-    bool ClusterSequence::contains(const PseudoJet & jet) const {
-      return jet.cluster_hist_index() >= 0 
-        &&   jet.cluster_hist_index() < int(_history.size())
-        &&   jet.has_valid_cluster_sequence()
-        &&   jet.associated_cluster_sequence() == this;
-    }
-
-I know that jet.has_valid_cluster_sequence() is true because I check
-that before I call my code.  I'm also assuming that the hist_index()
-parts pass as well (though I have no obvious way of checking).  I'm
-afraid its the last line that is failing because I made a copy of the
-associated_cluster_sequence when I reclustered!  
-
- * Do this analysis for low p_T W's 
- * Get rid of Phi distribution, come back if crazy things start happening
-
- * Put Current of FastJet in Github repo and push there
-
-Take the hardest jet to cut against gluons from QCD. 
-
- * Pythia *> cross sections at the end of the run, this will give
-   W+quark or W+gluon, 
-
-   * if W+gluon then the charge is zero
-   * if W+quark, then the charge is interesting
-     Make table (conserving weak isospin) predicting what kind of
-     quark will come with which W (charge) 
-     
-     Going to get more positive W's (or negative quarks)
-     * Product charge W with quark charge to increase statistical
-       power (histogram jet charge#W charge)
-
-       * Histogram the W charge 
-
-Any subjet calculation should be calculated in FasJet calculation class
-
-## Things for future
- * In the future look at Inv Mass dist of Jets as a function of W p_T
-   cut
