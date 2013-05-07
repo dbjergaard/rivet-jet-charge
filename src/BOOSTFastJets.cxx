@@ -118,7 +118,7 @@ namespace Rivet{
     fastjet::Filter filter(fastjet::JetDefinition(setJetAlgorithm(subjet_def), subjet_R), fastjet::SelectorPtFractionMin(percentage));
     return filter(jet);
   }
-  fastjet::PseudoJet BOOSTPruner(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
+  fastjet::PseudoJet Pruner(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
 			    double zcut=0.1, double Rcut_factor=0.5) {
     //sanity check on the jet
     assert(clusterSeq);

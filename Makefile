@@ -1,27 +1,13 @@
-# Compile macros using ROOT
 CC=g++
 
-
- ROOTSYS=${HOME}/root
- export PATH:=$(ROOTSYS)/bin:$(PATH)
- export PATH:=$(ROOTSYS)/bin:$(PATH)
- export LD_LIBRARY_PATH:=$(ROOTSYS)/lib:$(LD_LIBRARY_PATH)
-
 INCDIR=$(PWD)/include
-RIVETINCDIR=/home/dave/rivet/local/include
+RIVETINCDIR=$(HOME)/rivet/local/include
 WFLAGS= -Wall -Wextra
-CFLAGS=-m64 -std=c++11 -pg -I$(ROOTSYS)/include -I$(INCDIR) -I$(RIVETINCDIR) -O2 $(WFLAGS) -pedantic -ansi
-LDFLAGS=-L$(ROOTSYS)/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lGui  -lm -ldl -rdynamic -lFoam 
-ROOFITLDFLAGS=-lRooFit -lRooFitCore -lMinuit -lRooStats #-lMathMore
-
+CFLAGS=-m64 -pg -I$(INCDIR) -I$(RIVETINCDIR) -O2 $(WFLAGS) -pedantic -ansi
 all: rivet-lib
-
-rivet-lib:
-	$(CC) -shared -fPIC $(CFLAGS) -o "RivetMC_GENSTUDY_JETCHARGE.so" MC_GENSTUDY_JETCHARGE.cc
-
-produce-plots: produce-plots.o 
-	$(CC) produce-plots.o -o produce-plots $(LDFLAGS) 
-produce-plots.o: ./produce-plots.C 
-	$(CC) $(CFLAGS) -c ./produce-plots.C
+rivet-lib: libBOOSTFastJets.so
+	$(CC) -shared -fPIC $(CFLAGS) -o "RivetMC_GENSTUDY_JETCHARGE.so" MC_GENSTUDY_JETCHARGE.cc -lBOOSTFastJets -L ./ 
+libBOOSTFastJets.so:
+	$(CC) -shared -fPIC $(CFLAGS) src/BOOSTFastJets.cxx -o libBOOSTFastJets.so -lfastjet -lfastjettools -L $(HOME)/rivet/local/lib
 clean:
-	rm -rf *o  produce-plots
+	rm -f *.o  *.so

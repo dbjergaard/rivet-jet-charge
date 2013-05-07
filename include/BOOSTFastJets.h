@@ -45,7 +45,7 @@ namespace Rivet{
 
   /// Create a pruner, run it over specified jet
   /// Ellis, Vermilion and Walsh, arXiv:0903.5081
-  fastjet::PseudoJet BOOSTPruner(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
+  fastjet::PseudoJet Pruner(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def, 
 			    double zcut, double Rcut_factor);
 
   /// Get N=n_jets subjets to be used for finding N-subjettiness

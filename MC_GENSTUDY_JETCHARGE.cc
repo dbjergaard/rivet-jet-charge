@@ -203,7 +203,7 @@ namespace Rivet {
 	  foreach (const fastjet::PseudoJet& jet, jets) {
 	    _histograms["JetMassFilt"]->fill(Filter(JetProjection.clusterSeq(),jet, FastJets::CAM, 3, 0.3).m(), weight);
 	    _histograms["JetMassTrim"]->fill(Trimmer(JetProjection.clusterSeq(),jet, FastJets::CAM, 0.03, 0.3).m(), weight);
-	    _histograms["JetMassPrune"]->fill(BOOSTPruner(JetProjection.clusterSeq(),jet, FastJets::CAM, 0.4, 0.1).m(), weight);
+	    _histograms["JetMassPrune"]->fill(Pruner(JetProjection.clusterSeq(),jet, FastJets::CAM, 0.4, 0.1).m(), weight);
 	    PseudoJets constituents = jet.constituents();
 	    if (constituents.size() > 10) {
 	      PseudoJets axes(GetAxes(JetProjection.clusterSeq(), 2, constituents, FastJets::CAM, 0.5));
