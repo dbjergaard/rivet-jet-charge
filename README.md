@@ -2,11 +2,11 @@
 ## Obtaining and running
 1. Clone this repository
 ```git clone https://github.com/dbjergaard/rivet-jet-charge.git```
-2. Setup rivet with 'source rivet-env.sh'
+2. Setup rivet with ```source rivet-env.sh```
 3. Patch FastJets to include particles() method, recompile FastJets
 ```patch  ~/rivet/build/rivet/include/Rivet/Projections/FastJets.hh < BOOSTFastJets.patch```
 ```cd ~/rivet/build/rivet && make -j 4 && make install && cd -```
-4. Run 'make' in the repo directory
+4. Run ```make && make install``` in the repo directory
 5. Have fun looking at substructure histograms!
 
 ## Physics Motivation
