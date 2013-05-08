@@ -31,5 +31,5 @@ Tune:pp = 10 ! use Tune 4C
 ! ParticleDecays:limitTau0 = On
 ! ParticleDecays:tau0Max = 10.0
 
-Random:setSeed = on
-Random:seed = 1234
+! Random:setSeed = on
+! Random:seed = 1234
