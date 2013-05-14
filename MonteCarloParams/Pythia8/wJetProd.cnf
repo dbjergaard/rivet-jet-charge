@@ -27,9 +27,6 @@ WeakBosonAndParton:qg2Wq = on
 
 ! 5) Other settings. Can be expanded as desired.
 ! Note: may overwrite some of the values above, so watch out.
-Tune:pp = 10 ! use Tune 4C
+Tune:pp = 5 ! use Tune 4C
 ! ParticleDecays:limitTau0 = On
 ! ParticleDecays:tau0Max = 10.0
-
-! Random:setSeed = on
-! Random:seed = 1234

@@ -16,12 +16,8 @@ stream_error = True
 get_env = True
 Notification = Never
 
-# Tune 4C MSTW 2008 LO
-Arguments = $(Process) 10
-Queue 40
-
-# Tune 4C CTEQ6L1
-Arguments = $(Process) 9
+# Tune 4C
+Arguments = $(Process) 5
 Queue 40
 
 
