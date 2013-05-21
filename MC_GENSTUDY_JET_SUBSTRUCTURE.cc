@@ -421,7 +421,7 @@ public:
                     if(k * (Rmax/(double)meshsize) <= angfuncs[0][j] &&
                         (k+1) * (Rmax/(double)meshsize) > angfuncs[0][j]) {
                         jmin = j+1;
-                        angularstructure[k] += (angfuncs[0][j] * angfuncs[1][j]);
+                        angularstructure[k] +=  angfuncs[1][j];
                         normalisationfunc[k] += angfuncs[2][j];
                     }
                     else if((k+1) * (Rmax/(double)meshsize) < angfuncs[0][j]) break;
